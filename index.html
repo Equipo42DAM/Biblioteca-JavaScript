@@ -39,7 +39,7 @@
             class="bi bi-qr-code-scan"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="prestamos" title="Préstamos"><i
+        <a class="nav-link py-1 px-2 fs-6 text-white" data-section="prestamos" title="Préstamos" id="mnuListadoPrestamos"><i
             class="bi bi-arrow-left-right"></i></a>
       </li>
     </ul>
@@ -83,7 +83,7 @@
           </a>
         </li>
         <li class="nav-item mb-1">
-          <a href="#" class="nav-link text-nowrap fs-6 text-white" data-section="prestamos">
+          <a href="#" class="nav-link text-nowrap fs-6 text-white" data-section="prestamos" id="mnuListadoPrestamos">
             <i class="bi bi-arrow-left-right me-2"></i>
             <span>Préstamos</span>
           </a>
@@ -125,12 +125,30 @@
       </section>
 
       <section id="sec-prestamos" class="seccion-spa d-none">
+        <div class="border-bottom border-dark-subtle pb-2 mb-3">
+          <h2 class="h4 fw-bold text-dark mb-0">
+            <i class="bi bi-arrow-left-right text-success me-2"></i>
+            Gestión de Préstamos
+          </h2>
+        </div>
         <!-- Aquí irá tu tabla y formulario de préstamos -->
+        <button type="button" class="btn btn-success shadow">
+          <i class="bi bi-plus-circle me-1"></i> Nuevo Préstamo
+        </button>
+
+        <!-- Tabla de Préstamos -->
+        <div class="table-responsive border rounded mt-3" id="frmListadoPrestamos">
+        </div>
+
+
       </section>
     </main>
   </div>
   <!-- Script para el cambio de nombre dinamicamente -->
   <script src="js/selector-nombres.js"></script>
+  <script type="text/javascript" src="js/ajax.js"></script>
+	<script type="text/javascript" src="js/objetos-prestamos.js"></script>
+	<script type="text/javascript" src="js/codigo-prestamos.js"></script>
 </body>
 
 </html>
