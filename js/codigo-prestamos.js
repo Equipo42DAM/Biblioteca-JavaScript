@@ -1,35 +1,44 @@
 "use strict";
 
 var oBiblioteca = new Biblioteca();
+
 registrarEventos();
+mostrarListadoPrestamos();
 
 function registrarEventos() {
     document
-        .querySelector("#mnuListadoPrestamos")
-        .addEventListener("click", mostrarListadoPrestamos());
+        .querySelector("#mnuPrestamos")
+        .addEventListener("click", mostrarListadoPrestamos);
+    document
+        .querySelector("#mnuMovilPrestamos")
+        .addEventListener("click", mostrarListadoPrestamos);
+    document
+        .querySelector("#btnAltaPrestamo")
+        .addEventListener("click", mostrarFormularios);
 
 }
 
 function mostrarFormularios(oEvento) {
-    let opcion = oEvento.target.id;
-
+    let opcion = oEvento.target.closest("a, button")?.id || oEvento.target.id;
     ocultarFormularios();
 
     switch(opcion){
-        case "mnuListadoPrestamos":
-            listadoPrestamos.classList.remove("d-none");
+        case "btnAltaPrestamo":
+            frmAltaPrestamo.classList.remove("d-none");
             break;
+
     }
 }
 
 function ocultarFormularios() {
-    frmListadoPrestamos.classList.add("d-none");
+    document.querySelector("#listadoPrestamos").innerHTML = "";
+    frmAltaPrestamo.classList.add("d-none");
 }
 
 async function mostrarListadoPrestamos() {
     let respuesta = await oBiblioteca.listadoPrestamos();
 
-    const tabla = document.querySelector("#frmListadoPrestamos");
+    const tabla = document.querySelector("#listadoPrestamos");
     const filas = respuesta.datos ?? [];
 
     if (!respuesta.ok || filas.length === 0) {
@@ -112,5 +121,9 @@ async function mostrarListadoPrestamos() {
             </tbody>
         </table>
     `;
+
+}
+
+async function mostrarFormularioNuevoPrestamo() {
 
 }

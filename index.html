@@ -39,8 +39,8 @@
             class="bi bi-qr-code-scan"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link py-1 px-2 fs-6 text-white" data-section="prestamos" title="Préstamos" id="mnuListadoPrestamos"><i
-            class="bi bi-arrow-left-right"></i></a>
+        <a class="nav-link py-1 px-2 fs-6 text-white" data-section="prestamos" title="Préstamos"
+          id="mnuMovilPrestamos"><i class="bi bi-arrow-left-right"></i></a>
       </li>
     </ul>
   </div>
@@ -83,7 +83,7 @@
           </a>
         </li>
         <li class="nav-item mb-1">
-          <a href="#" class="nav-link text-nowrap fs-6 text-white" data-section="prestamos" id="mnuListadoPrestamos">
+          <a href="#" class="nav-link text-nowrap fs-6 text-white" data-section="prestamos" id="mnuPrestamos">
             <i class="bi bi-arrow-left-right me-2"></i>
             <span>Préstamos</span>
           </a>
@@ -124,6 +124,7 @@
         <!-- Aquí irá tu tabla y formulario de ejemplares -->
       </section>
 
+      <!-- Gestión de préstamos -->
       <section id="sec-prestamos" class="seccion-spa d-none">
         <div class="border-bottom border-dark-subtle pb-2 mb-3">
           <h2 class="h4 fw-bold text-dark mb-0">
@@ -131,24 +132,72 @@
             Gestión de Préstamos
           </h2>
         </div>
-        <!-- Aquí irá tu tabla y formulario de préstamos -->
-        <button type="button" class="btn btn-success shadow">
+
+        <button type="button" class="btn btn-success shadow" id="btnAltaPrestamo">
           <i class="bi bi-plus-circle me-1"></i> Nuevo Préstamo
         </button>
 
         <!-- Tabla de Préstamos -->
-        <div class="table-responsive border rounded mt-3" id="frmListadoPrestamos">
+        <div class="table-responsive border rounded mt-3" name="listadoPrestamos" id="listadoPrestamos">
         </div>
 
+        <!-- Formulario Alta Prestamo -->
+        <form class="form-horizontal d-none" name="frmAltaPrestamo" id="frmAltaPrestamo">
+          <fieldset>
+            <!-- Form Name -->
+            <legend>Alta de componente</legend>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="txtAltaNombre">Nombre del componente</label>
+              <div class="col-xs-4">
+                <input id="txtAltaNombre" name="txtAltaNombre" class="form-control input-md" type="text">
+
+              </div>
+            </div>
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="txtAltaDescripcion">Descripción</label>
+              <div class="col-xs-4">
+                <input id="txtAltaDescripcion" name="txtAltaDescripcion" class="form-control input-md" type="text">
+              </div>
+            </div>
+            <!-- Number input-->
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="txtAltaPrecio">Precio</label>
+              <div class="col-xs-4">
+                <input id="txtAltaPrecio" name="txtAltaPrecio" class="form-control input-md" type="number">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="lstAltaTipo">Tipo</label>
+              <div class="col-xs-4">
+                <select class="form-select" name="lstAltaTipo" id="lstAltaTipo">
+
+                </select>
+              </div>
+            </div>
+            <!-- Button -->
+            <div class="form-group">
+              <label class="col-xs-4 control-label" for="btnAceptarAltaComponente"></label>
+              <div class="col-xs-4">
+                <input type="button" id="btnAceptarAltaComponente" name="btnAceptarAltaComponente"
+                  class="btn btn-primary" value="Aceptar" />
+              </div>
+            </div>
+
+          </fieldset>
+        </form>
 
       </section>
+
     </main>
   </div>
   <!-- Script para el cambio de nombre dinamicamente -->
   <script src="js/selector-nombres.js"></script>
   <script type="text/javascript" src="js/ajax.js"></script>
-	<script type="text/javascript" src="js/objetos-prestamos.js"></script>
-	<script type="text/javascript" src="js/codigo-prestamos.js"></script>
+  <script type="text/javascript" src="js/objetos-prestamos.js"></script>
+  <script type="text/javascript" src="js/codigo-prestamos.js"></script>
 </body>
 
 </html>
