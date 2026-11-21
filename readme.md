@@ -14,8 +14,8 @@ Antes de comenzar, asegúrate de tener instalado en tu equipo:
 
 ## 🌐 Enlaces del Proyecto
 
-* **Repositorio en GitHub:** [Enlace a GitHub del proyecto] *(Pendiente de actualizar con tu enlace real)*
-* **Alojamiento Web:** [Enlace al alojamiento web] *(Pendiente de actualizar con tu URL de producción)*
+* **Repositorio en GitHub:** <https://github.com/Equipo42DAM/Biblioteca-JavaScript>
+* **Despliegue / Alojamiento Web:** <https://bibliotecaoharaspa.infinityfree.me>
 
 ---
 
