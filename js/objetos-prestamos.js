@@ -13,7 +13,7 @@ class Prestamo {
     #urlImagen;
     #fechaBaja;
 
-    constructor(idPrestamo, idEjemplar, tituloLibro, fechaPrestamo, fechaLimite, fechaDevolucion, observaciones, importeFianza, tieneFianza, urlImagen, fechaBaja) {
+    constructor(idPrestamo, idEjemplar, tituloLibro = "", fechaPrestamo, fechaLimite, fechaDevolucion = null, observaciones = "", importeFianza = 0, tieneFianza, urlImagen = null, fechaBaja = null) {
         this.#idPrestamo = idPrestamo;
         this.#idEjemplar = idEjemplar;
         this.#tituloLibro = tituloLibro;
@@ -111,10 +111,25 @@ class LibrosDisponibles {
 }
 
 class Biblioteca {
-    async crearPrestamo(oPrestamo){
+    async crearPrestamo(oPrestamo, archivoImagen = null) {
         let datos = new FormData();
-        datos.append("Prestamo", JSON.stringify(oPrestamo));
+        datos.append("prestamo", JSON.stringify(oPrestamo));
         let respuesta = await peticionPOST("prestamos_crear.php", datos);
+
+        const nuevoId = respuesta?.datos;
+        if (respuesta?.ok && archivoImagen && nuevoId) {
+            const datosSubida = await this.subirImagenPrestamo(archivoImagen, nuevoId);
+            const urlSubida = datosSubida?.datos?.url_imagen ?? datosSubida?.url_imagen;
+
+            if (datosSubida?.ok && urlSubida) {
+                oPrestamo.idPrestamo = nuevoId;
+                oPrestamo.urlImagen = urlSubida;
+                await this.modificarPrestamo(oPrestamo);
+            } else {
+                respuesta.mensaje = `${respuesta.mensaje}. Aviso con la imagen: ${datosSubida?.mensaje || "no se pudo subir"}`;
+            }
+        }
+
         return respuesta;
     }
 
@@ -134,6 +149,46 @@ class Biblioteca {
         let datos = new FormData();
         datos.append("idEjemplar", idEjemplar);
         let respuesta = await peticionGET("prestamos_disponibles.php", datos);
+        return respuesta;
+    }
+
+    async subirImagenPrestamo(archivo, idPrestamo) {
+        let datos = new FormData();
+        datos.append("imagen", archivo);
+        if (idPrestamo !== null && idPrestamo !== undefined) {
+            datos.append("idPrestamo", idPrestamo);
+        }
+        let respuesta = await peticionPOST("prestamos_guardar_imagen.php", datos);
+        return respuesta;
+    }
+
+    async resolverUrlImagenEdicion(inputUrlImagen, urlActual = "", idPrestamo = null) {
+        const archivoNuevo =
+            inputUrlImagen && inputUrlImagen.type === "file"
+                ? inputUrlImagen.files?.[0]
+                : null;
+
+        if (!archivoNuevo) {
+            if (inputUrlImagen && inputUrlImagen.type !== "file") {
+                return inputUrlImagen.value.trim() || urlActual;
+            }
+            return urlActual;
+        }
+
+        const datosSubida = await this.subirImagenPrestamo(archivoNuevo, idPrestamo);
+        const urlSubida = datosSubida?.datos?.url_imagen ?? datosSubida?.url_imagen;
+
+        if (!datosSubida?.ok || !urlSubida) {
+            throw new Error(datosSubida?.mensaje || "No se pudo subir la nueva imagen.");
+        }
+
+        return urlSubida;
+    }
+
+    async modificarPrestamo(oPrestamo) {
+        let datos = new FormData();
+        datos.append("prestamo", JSON.stringify(oPrestamo));
+        let respuesta = await peticionPOST("prestamos_modificar.php", datos);
         return respuesta;
     }
   
