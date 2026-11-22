@@ -4,48 +4,83 @@ require_once __DIR__ . '/config.php';
 $conexion = obtenerConexion();
 $metodo = $_SERVER['REQUEST_METHOD'];
 
-// =========================================================================
-// GET: LISTAR O BUSCAR LIBROS
-// =========================================================================
 if ($metodo === 'GET') {
-    $busqueda = isset($_GET['busqueda']) ? trim($_GET['busqueda']) : '';
-    $criterio = isset($_GET['criterio']) ? $_GET['criterio'] : 'titulo';
+    $accion = $_GET['accion'] ?? 'listar';
 
-    if ($busqueda !== '') {
-        $columna = ($criterio === 'anio_edicion') ? 'anio_edicion' : 'titulo';
-        $like = '%' . $busqueda . '%';
-
-        $stmt = $conexion->prepare(
-            "SELECT id_libro, id_editorial, titulo, isbn, anio_edicion, fecha_baja, esta_espanol, url_imagen
-             FROM libros_manuel
-             WHERE $columna LIKE ?
-             ORDER BY id_libro ASC"
-        );
-
-        if (!$stmt) {
-            responder(null, false, "Error al preparar la búsqueda: " . $conexion->error, $conexion);
+    if ($accion === 'editoriales') {
+        $resEd = $conexion->query("SELECT * FROM editorial_carlos ORDER BY 1 ASC");
+        if (!$resEd) {
+            responder(null, false, "Error al cargar editoriales: " . $conexion->error, $conexion);
         }
-
-        $stmt->bind_param("s", $like);
-        $stmt->execute();
-        $resultado = $stmt->get_result();
-    } else {
-        $resultado = $conexion->query(
-            "SELECT id_libro, id_editorial, titulo, isbn, anio_edicion, fecha_baja, esta_espanol, url_imagen
-             FROM libros_manuel
-             ORDER BY id_libro ASC"
-        );
+        $editoriales = [];
+        while ($ed = $resEd->fetch_assoc()) {
+            $id = $ed['id_editorial'] ?? reset($ed);
+            $nombre = $ed['nombre_editorial'] ?? $ed['nombre'] ?? ('Editorial #' . $id);
+            $editoriales[] = [
+                'id_editorial' => $id,
+                'nombre_editorial' => $nombre
+            ];
+        }
+        responder($editoriales, true, "OK", $conexion);
     }
 
+    $busqueda = isset($_GET['busqueda']) ? trim($_GET['busqueda']) : '';
+    $criterio = isset($_GET['criterio']) ? $_GET['criterio'] : 'titulo';
+    $filtroEspanol = isset($_GET['esta_espanol']) ? trim($_GET['esta_espanol']) : '';
+
+    $columnasPermitidas = [
+        'titulo' => 'l.titulo',
+        'isbn' => 'l.isbn',
+        'anio_edicion' => 'l.anio_edicion'
+    ];
+    $columnaFiltro = $columnasPermitidas[$criterio] ?? 'l.titulo';
+
+    $sql = "SELECT l.id_libro, l.id_editorial, l.titulo, l.isbn, l.anio_edicion,
+                   l.fecha_baja, l.esta_espanol, l.url_imagen
+            FROM libros_manuel l";
+
+    $condiciones = [];
+    $tipos = "";
+    $params = [];
+
+    if ($busqueda !== '') {
+        $condiciones[] = "$columnaFiltro LIKE ?";
+        $tipos .= "s";
+        $params[] = '%' . $busqueda . '%';
+    }
+
+    if ($filtroEspanol !== '' && ($filtroEspanol === '0' || $filtroEspanol === '1')) {
+        $condiciones[] = "l.esta_espanol = ?";
+        $tipos .= "i";
+        $params[] = intval($filtroEspanol);
+    }
+
+    if (count($condiciones) > 0) {
+        $sql .= " WHERE " . implode(" AND ", $condiciones);
+    }
+
+    $sql .= " ORDER BY l.id_libro ASC";
+
+    $stmt = $conexion->prepare($sql);
+    if (!$stmt) {
+        responder(null, false, "Error al preparar consulta: " . $conexion->error, $conexion);
+    }
+
+    if ($tipos !== "") {
+        $stmt->bind_param($tipos, ...$params);
+    }
+
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
     if (!$resultado) {
-        responder(null, false, "Error en la consulta: " . $conexion->error, $conexion);
+        responder(null, false, "Error al ejecutar consulta: " . $conexion->error, $conexion);
     }
 
     $libros = [];
     while ($fila = $resultado->fetch_assoc()) {
         if (!empty($fila['url_imagen'])) {
-            $rutaRelativa = ltrim($fila['url_imagen'], '/');
-            $rutaFisica = __DIR__ . '/../' . $rutaRelativa;
+            $rutaFisica = __DIR__ . '/../' . ltrim($fila['url_imagen'], '/');
             if (!file_exists($rutaFisica)) {
                 $fila['url_imagen'] = null;
             }
@@ -56,9 +91,6 @@ if ($metodo === 'GET') {
     responder($libros, true, "OK", $conexion);
 }
 
-// =========================================================================
-// POST: GUARDAR, EDITAR, DAR DE BAJA O DAR DE ALTA
-// =========================================================================
 if ($metodo === 'POST') {
     $accion = $_POST['accion'] ?? 'guardar';
 
@@ -68,7 +100,7 @@ if ($metodo === 'POST') {
             responder(null, false, "Falta el ID del libro.", $conexion);
         }
 
-        $fecha_baja = ($accion === 'baja') ? date('Y-m-d') : null;
+        $fecha_baja = ($accion === 'baja') ? date('Y-m-d H:i:s') : null;
 
         $stmt = $conexion->prepare("UPDATE libros_manuel SET fecha_baja = ? WHERE id_libro = ?");
         if (!$stmt) {
@@ -77,7 +109,7 @@ if ($metodo === 'POST') {
 
         $stmt->bind_param("si", $fecha_baja, $id_libro);
         if (!$stmt->execute()) {
-            responder(null, false, "Error al actualizar el estado: " . $stmt->error, $conexion);
+            responder(null, false, "Error al actualizar el estado: " . $conexion->error, $conexion);
         }
 
         $msg = ($accion === 'baja') ? "Libro dado de baja correctamente." : "Libro dado de alta correctamente.";
@@ -90,15 +122,19 @@ if ($metodo === 'POST') {
     $isbn = trim($_POST['isbn'] ?? '');
     $anio_edicion_raw = trim($_POST['anio_edicion'] ?? '');
     $fecha_baja_raw = trim($_POST['fecha_baja'] ?? '');
-    $esta_espanol = (isset($_POST['esta_espanol']) && $_POST['esta_espanol'] !== '') ? intval($_POST['esta_espanol']) : 0;
+    $esta_espanol = (isset($_POST['esta_espanol']) && $_POST['esta_espanol'] !== '') ? intval($_POST['esta_espanol']) : 1;
 
-    if ($titulo === '' || $id_editorial === '' || $isbn === '') {
-        responder(null, false, "Por favor, completa los campos obligatorios (*).", $conexion);
+    if ($titulo === '' || $id_editorial === '') {
+        responder(null, false, "Completa los campos obligatorios (*).", $conexion);
     }
 
     $id_editorial_int = intval($id_editorial);
+    $isbn_val = ($isbn !== '') ? $isbn : null;
     $anio_edicion = ($anio_edicion_raw !== '') ? intval($anio_edicion_raw) : null;
-    $fecha_baja = ($fecha_baja_raw !== '') ? $fecha_baja_raw : null;
+    $fecha_baja = null;
+    if ($fecha_baja_raw !== '') {
+        $fecha_baja = (strlen($fecha_baja_raw) === 10) ? ($fecha_baja_raw . ' 00:00:00') : $fecha_baja_raw;
+    }
 
     $ruta_imagen = null;
     if ($id_libro !== '') {
@@ -136,14 +172,14 @@ if ($metodo === 'POST') {
              WHERE id_libro = ?"
         );
         if (!$stmt) {
-            responder(null, false, "Error al preparar la actualización: " . $conexion->error, $conexion);
+            responder(null, false, "Error al preparar actualización: " . $conexion->error, $conexion);
         }
 
         $stmt->bind_param(
             "sisssisi",
             $titulo,
             $id_editorial_int,
-            $isbn,
+            $isbn_val,
             $anio_edicion,
             $fecha_baja,
             $esta_espanol,
@@ -152,7 +188,7 @@ if ($metodo === 'POST') {
         );
 
         if (!$stmt->execute()) {
-            responder(null, false, "Error al actualizar el libro: " . $stmt->error, $conexion);
+            responder(null, false, "Error al actualizar libro: " . $stmt->error, $conexion);
         }
 
         responder(null, true, "Libro actualizado correctamente.", $conexion);
@@ -164,14 +200,14 @@ if ($metodo === 'POST') {
          VALUES (?, ?, ?, ?, ?, ?, ?)"
     );
     if (!$stmt) {
-        responder(null, false, "Error al preparar el alta: " . $conexion->error, $conexion);
+        responder(null, false, "Error al preparar alta: " . $conexion->error, $conexion);
     }
 
     $stmt->bind_param(
         "sisssis",
         $titulo,
         $id_editorial_int,
-        $isbn,
+        $isbn_val,
         $anio_edicion,
         $fecha_baja,
         $esta_espanol,
@@ -179,7 +215,7 @@ if ($metodo === 'POST') {
     );
 
     if (!$stmt->execute()) {
-        responder(null, false, "Error al guardar el libro: " . $stmt->error, $conexion);
+        responder(null, false, "Error al guardar libro: " . $stmt->error, $conexion);
     }
 
     responder(["id_libro" => $conexion->insert_id], true, "Libro guardado correctamente.", $conexion);

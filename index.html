@@ -5,15 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración - Biblioteca Ohara</title>
-  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 </head>
 
 <body class="d-flex flex-column vh-100 bg-light m-0 overflow-hidden">
 
-  <!-- Barra de navegación superior para móviles -->
   <div class="d-md-none bg-dark text-white p-2 d-flex align-items-center overflow-auto shadow-sm flex-shrink-0">
     <a href="#" class="text-white text-decoration-none me-3 d-flex align-items-center flex-shrink-0 ps-2">
       <i class="bi bi-book-half text-success fs-6 me-1"></i>
@@ -38,10 +35,8 @@
     </ul>
   </div>
 
-  <!-- Contenedor principal -->
   <div class="d-flex flex-grow-1 vh-100 w-100 m-0 p-0 overflow-hidden">
 
-    <!-- Panel de Navegación Lateral / Sidebar -->
     <aside class="bg-dark text-white p-3 d-none d-md-flex flex-column vh-100 overflow-auto flex-shrink-0"
       style="width: 260px;">
 
@@ -51,7 +46,6 @@
         <span class="fw-bold text-nowrap fs-6">Biblioteca Ohara</span>
       </a>
 
-      <!-- Menú de Entidades del CRUD -->
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item mb-1">
           <a href="#" class="nav-link text-nowrap fs-6 text-white" data-section="inicio">
@@ -85,20 +79,17 @@
         </li>
       </ul>
 
-      <!-- Bloque del Responsable -->
       <div class="pt-3 border-top border-secondary flex-shrink-0">
         <div class="d-flex align-items-center mb-1">
           <i class="bi bi-person-badge-fill text-success fs-6 me-2"></i>
           <span class="small fw-bold text-uppercase text-nowrap">Responsable</span>
         </div>
         <div id="nombre-responsable" class="small text-white text-nowrap ps-4">
-          <!-- Se rellenará dinámicamente con JavaScript -->
         </div>
       </div>
 
     </aside>
 
-    <!-- ÁREA DE CONTENIDO DE LAS SECCIONES -->
     <main class="flex-grow-1 p-4 overflow-auto bg-white">
       <section id="sec-inicio" class="seccion-spa">
         <h2>Panel de Inicio</h2>
@@ -107,7 +98,6 @@
 
       <section id="sec-editoriales" class="seccion-spa d-none">
         <h2>Gestión de Editoriales</h2>
-        <!-- Aquí irá tu tabla y formulario de editoriales -->
       </section>
 
       <section id="sec-libros" class="seccion-spa d-none">
@@ -118,10 +108,8 @@
           </div>
         </div>
 
-        <!-- Contenedor de alertas dinámicas -->
         <div id="alertas-libros"></div>
 
-        <!-- VISTA LISTADO -->
         <div id="vista-listado-libros" class="card shadow-sm mb-5">
           <div class="card-header bg-white py-3">
             <div class="row align-items-center g-3">
@@ -180,7 +168,6 @@
           </div>
         </div>
 
-        <!-- VISTA FORMULARIO -->
         <div id="vista-formulario-libro" class="card shadow-sm mb-5 d-none">
           <div class="card-header bg-white py-3">
             <h3 id="tituloFormularioLibro" class="h5 card-title mb-0">Formulario de Nuevo Libro</h3>
@@ -199,6 +186,9 @@
                 <div class="col-md-6">
                   <label for="id_editorial" class="form-label">ID Editorial (FK) *</label>
                   <input type="number" class="form-control" id="id_editorial" name="id_editorial" required>
+                  <select class="form-select mt-2" id="select_editorial_bd" name="select_editorial_bd">
+                    <option value="">Seleccionar editorial desde BD...</option>
+                  </select>
                 </div>
 
                 <div class="col-md-4">
@@ -245,23 +235,29 @@
 
       <section id="sec-ejemplares" class="seccion-spa d-none">
         <h2>Gestión de Ejemplares</h2>
-        <!-- Aquí irá tu tabla y formulario de ejemplares -->
       </section>
 
       <section id="sec-prestamos" class="seccion-spa d-none">
         <h2>Gestión de Préstamos</h2>
-        <!-- Aquí irá tu tabla y formulario de préstamos -->
       </section>
     </main>
 
   </div>
 
-  <!-- Bootstrap 5 JS Bundle -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toastNotificacionLibros" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div id="toastMensajeLibros" class="toast-body text-white"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Script para el cambio de nombre dinamicamente -->
+  <script src="js/ajax.js"></script>
+  <script src="js/objetos-libros.js"></script>
   <script src="js/selector-nombres.js"></script>
-  <!-- Script de gestión de Libros -->
-  <script src="js/libros.js"></script>
+  <script src="js/funcionalidad-libros.js"></script>
 </body>
 
 </html>
