@@ -12,11 +12,14 @@ function registrarEventos() {
         .querySelector("#mnuMovilPrestamos")
         .addEventListener("click", mostrarListadoPrestamos);
     document
-        .querySelector("#btnAltaPrestamo")
+        .querySelector("#btnMostrarFrmPrestamo")
         .addEventListener("click", mostrarFormularios); 
     document
         .querySelector("#btnBajaPrestamo")
         .addEventListener("click", darDeBajaPrestamo);
+    document
+        .querySelector("#lstTieneFianza")
+        .addEventListener("change", comprobarFianza);
 
 }
 
@@ -25,8 +28,9 @@ function mostrarFormularios(oEvento) {
     ocultarFormularios();
 
     switch(opcion){
-        case "btnAltaPrestamo":
-            frmAltaPrestamo.classList.remove("d-none");
+        case "btnMostrarFrmPrestamo":
+            mostrarLibrosDisponibles();
+            document.querySelector("#frmCardPrestamo").classList.remove("d-none");
             break;
 
     }
@@ -34,15 +38,17 @@ function mostrarFormularios(oEvento) {
 
 function ocultarFormularios() {
     document.querySelector("#listadoPrestamos").innerHTML = "";
-    frmAltaPrestamo.classList.add("d-none");
+    document.querySelector("#listadoPrestamos").classList.remove("border");
+    document.querySelector("#frmCardPrestamo").classList.add("d-none");
 }
 
 async function mostrarListadoPrestamos() {
+    ocultarFormularios();
     let respuesta = await oBiblioteca.listadoPrestamos();
 
     const tabla = document.querySelector("#listadoPrestamos");
     const filas = respuesta.datos ?? [];
-
+    tabla.classList.add("border");
     if (!respuesta.ok || filas.length === 0) {
         tabla.innerHTML = `
             <div class="alert alert-info text-center" role="alert">
@@ -100,6 +106,7 @@ async function mostrarListadoPrestamos() {
             </tr>
         `
     ).join("");
+
     tabla.innerHTML = `
         <table class="table table-striped border-dark-subtle align-middle small">
             <thead class="table-dark">
@@ -125,10 +132,6 @@ async function mostrarListadoPrestamos() {
     registrarEventos();
 }
 
-async function mostrarFormularioNuevoPrestamo() {
-
-}
-
 async function darDeBajaPrestamo(oEvento) {
     let boton = oEvento.target.closest("button");
     let idPrestamo = boton.dataset.id;
@@ -140,4 +143,36 @@ async function darDeBajaPrestamo(oEvento) {
     if (respuesta?.ok) {
         await mostrarListadoPrestamos();
     }
+}
+
+async function mostrarLibrosDisponibles() {
+    let respuesta = await oBiblioteca.librosDisponibles();
+    let options = "";
+
+    const filas = respuesta.datos ?? [];
+    if (!respuesta.ok || filas.length === 0) {
+        options = `<option value="">No hay libros disponibles</option>`;
+        frmPrestamo.lstTituloLibro.innerHTML = options;
+        return;
+    }
+
+    const libros = filas.map(
+        (fila) =>
+            new LibrosDisponibles(
+                fila.id_libro,
+                fila.titulo_libro,
+                fila.id_ejemplar,
+                fila.disponibles,
+            )
+    )
+
+    const optionsLibros = libros.map(
+        (l) => `<option value="${l.idEjemplar}">${l.tituloLibro + " - (" + l.disponibles + " Disponibles)"}</option>`).join("");
+
+    frmPrestamo.lstTituloLibro.innerHTML = optionsLibros;
+}
+
+async function comprobarFianza() {
+    let option = frmPrestamo.lstTieneFianza.value;
+    frmPrestamo.importeFianza.disabled = option === "0" ? true : false;        
 }

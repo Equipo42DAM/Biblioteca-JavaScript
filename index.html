@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel de Administración - Biblioteca Ohara</title>
-  <!-- Bootstrap 5 CSS -->
+  <!-- Bootstrap 6 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
@@ -51,9 +51,9 @@
     <aside class="bg-dark text-white p-3 d-none d-md-flex flex-column vh-100 overflow-auto flex-shrink-0"
       style="width: 260px">
       <a href="#" data-section="inicio"
-        class="logo-inicio d-flex align-items-center mb-4 text-white text-decoration-none border-bottom border-secondary pb-3 flex-shrink-0">
-        <i class="bi bi-book-half fs-5 text-success me-2"></i>
-        <span class="fw-bold text-nowrap fs-6">Biblioteca Ohara</span>
+        class="logo-inicio animation-pop d-flex align-items-center mb-4 text-white text-decoration-none border-bottom border-secondary pb-3 flex-shrink-0">
+        <img src="favicon.ico" width="30" height="30" class="object-fit-contain">
+        <span class="fw-bold text-nowrap fs-6 mx-2">Biblioteca Ohara</span>
       </a>
 
       <!-- Menú de Entidades del CRUD -->
@@ -133,61 +133,78 @@
           </h2>
         </div>
 
-        <button type="button" class="btn btn-success shadow" id="btnAltaPrestamo">
+        <button type="button" class="btn btn-success shadow mb-3" id="btnMostrarFrmPrestamo">
           <i class="bi bi-plus-circle me-1"></i> Nuevo Préstamo
         </button>
 
         <!-- Tabla de Préstamos -->
-        <div class="table-responsive border rounded mt-3" name="listadoPrestamos" id="listadoPrestamos">
+        <div class="table-responsive rounded" name="listadoPrestamos" id="listadoPrestamos">
         </div>
 
-        <!-- Formulario Alta Prestamo -->
-        <form class="form-horizontal d-none" name="frmAltaPrestamo" id="frmAltaPrestamo">
-          <fieldset>
-            <!-- Form Name -->
-            <legend>Alta de componente</legend>
+        <!-- Formulario Prestamo -->
+        <div id="frmCardPrestamo" class="card shadow-lg d-none mx-auto">
+          <div class="card-header d-flex justify-content-center align-items-center bg-dark">
+            <h5 class="card-title mb-0 text-light">Formulario de préstamo</h5>
+          </div>
 
-            <!-- Text input-->
-            <div class="form-group">
-              <label class="col-xs-4 control-label" for="txtAltaNombre">Nombre del componente</label>
-              <div class="col-xs-4">
-                <input id="txtAltaNombre" name="txtAltaNombre" class="form-control input-md" type="text">
+          <div class="card-body bg-light">
+            <form id="frmPrestamo" name="frmPrestamo">
+              <div class="row g-3">
+
+                <div class="col-md-12">
+                  <label for="lstTituloLibro" class="form-label fw-bold">Título del libro</label>
+                  <select class="form-select menu" id="lstTituloLibro" name="lstTituloLibro">
+                  </select>
+                </div>
+                
+                <div class="col-md-3">
+                  <label for="tieneFianza" class="form-label fw-bold">Fianza</label>
+                  <select class="form-select" id="lstTieneFianza" name="lstTieneFianza">
+                    <option value="0" selected>No</option>
+                    <option value="1">Sí</option>
+                  </select>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="importeFianza" class="form-label fw-bold">Importe</label>
+                  <div class="input-group">
+                    <input type="number" step="0.01" min="0" class="form-control" id="importeFianza"
+                      name="importeFianza">
+                    <span class="input-group-text">€</span>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="fechaPrestamo" class="form-label fw-bold">Fecha de préstamo</label>
+                  <input type="date" class="form-control" id="fechaPrestamo" name="fechaPrestamo" required>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="fechaLimite" class="form-label fw-bold">Fecha límite</label>
+                  <input type="date" class="form-control" id="fechaLimite" name="fechaLimite" required>
+                </div>
+
+                <div class="col-12">
+                  <label for="urlImagen" class="form-label fw-bold">Subir imagen para el préstamo</label>
+                  <input type="file" class="form-control" id="urlImagen" name="urlImagen"
+                    accept=".jpg,.jpeg,.png,.webp,image/*">
+                  <div class="form-text">Formatos permitidos: JPG, PNG o WEBP (máx. 5 MB).</div>
+                </div>
+
+                <div class="col-12">
+                  <label for="observaciones" class="form-label fw-bold">Observaciones</label>
+                  <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+                </div>
 
               </div>
-            </div>
-            <!-- Text input-->
-            <div class="form-group">
-              <label class="col-xs-4 control-label" for="txtAltaDescripcion">Descripción</label>
-              <div class="col-xs-4">
-                <input id="txtAltaDescripcion" name="txtAltaDescripcion" class="form-control input-md" type="text">
-              </div>
-            </div>
-            <!-- Number input-->
-            <div class="form-group">
-              <label class="col-xs-4 control-label" for="txtAltaPrecio">Precio</label>
-              <div class="col-xs-4">
-                <input id="txtAltaPrecio" name="txtAltaPrecio" class="form-control input-md" type="number">
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-xs-4 control-label" for="lstAltaTipo">Tipo</label>
-              <div class="col-xs-4">
-                <select class="form-select" name="lstAltaTipo" id="lstAltaTipo">
 
-                </select>
+              <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" id="btnCancelarPrestamo" class="btn btn-dark">Cancelar</button>
+                <button type="submit" class="btn btn-success" id="btnGuardarPrestamo">Guardar</button>
               </div>
-            </div>
-            <!-- Button -->
-            <div class="form-group">
-              <label class="col-xs-4 control-label" for="btnAceptarAltaComponente"></label>
-              <div class="col-xs-4">
-                <input type="button" id="btnAceptarAltaComponente" name="btnAceptarAltaComponente"
-                  class="btn btn-primary" value="Aceptar" />
-              </div>
-            </div>
-
-          </fieldset>
-        </form>
+            </form>
+          </div>
+        </div>
 
       </section>
 
@@ -198,6 +215,7 @@
   <script type="text/javascript" src="js/ajax.js"></script>
   <script type="text/javascript" src="js/objetos-prestamos.js"></script>
   <script type="text/javascript" src="js/codigo-prestamos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

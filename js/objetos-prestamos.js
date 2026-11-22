@@ -76,12 +76,45 @@ class Prestamo {
         };
     }
 }
+class LibrosDisponibles {
+    #idLibro;
+    #tituloLibro;
+    #idEjemplar;
+    #disponibles;
+
+    constructor(idLibro, tituloLibro, idEjemplar, disponibles) {
+        this.#idLibro = idLibro;
+        this.#tituloLibro = tituloLibro;
+        this.#idEjemplar = idEjemplar;
+        this.#disponibles = disponibles; 
+    }
+    get idLibro() {return this.#idLibro;}
+    set idLibro(valor) {this.#idLibro = valor;}
+
+    get tituloLibro() {return this.#tituloLibro;}
+    set tituloLibro(valor) {this.#tituloLibro = valor;}
+
+    get idEjemplar() {return this.#idEjemplar;}
+    set idEjemplar(valor) {this.#idEjemplar = valor;}
+
+    get disponibles() {return this.#disponibles;}
+    set disponibles(valor) {this.#disponibles = valor;}
+
+    toJSON() {
+        return {
+            idLibro:     this.#idLibro,
+            tituloLibro: this.#tituloLibro,
+            idEjemplar:  this.#idEjemplar,
+            disponibles: this.#disponibles,
+        };
+    }
+}
 
 class Biblioteca {
     async crearPrestamo(oPrestamo){
         let datos = new FormData();
         datos.append("Prestamo", JSON.stringify(oPrestamo));
-        let respuesta = await peticionPOST("crear_prestamo.php", datos);
+        let respuesta = await peticionPOST("prestamos_crear.php", datos);
         return respuesta;
     }
 
@@ -94,6 +127,13 @@ class Biblioteca {
         let datos = new FormData();
         datos.append("idPrestamo", idPrestamo);
         let respuesta = await peticionPOST("prestamos_cambiar_estado.php", datos);
+        return respuesta;
+    }
+
+    async librosDisponibles(idEjemplar) {
+        let datos = new FormData();
+        datos.append("idEjemplar", idEjemplar);
+        let respuesta = await peticionGET("prestamos_disponibles.php", datos);
         return respuesta;
     }
   
