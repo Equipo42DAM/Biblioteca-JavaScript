@@ -2,7 +2,6 @@
 
 var oBiblioteca = new Biblioteca();
 
-registrarEventos();
 mostrarListadoPrestamos();
 
 function registrarEventos() {
@@ -14,7 +13,10 @@ function registrarEventos() {
         .addEventListener("click", mostrarListadoPrestamos);
     document
         .querySelector("#btnAltaPrestamo")
-        .addEventListener("click", mostrarFormularios);
+        .addEventListener("click", mostrarFormularios); 
+    document
+        .querySelector("#btnBajaPrestamo")
+        .addEventListener("click", darDeBajaPrestamo);
 
 }
 
@@ -82,23 +84,22 @@ async function mostrarListadoPrestamos() {
                     <td>${p.fechaDevolucion ?? "-"}</td>
                     <td>${p.fechaBaja ?? "-"}</td>
                     <td class="text-nowrap">
-                        <button type="button" class="btn btn-warning btn-sm" data-id="${p.idPrestamo} id="btnEditarPrestamo" title="Editar">
+                        <button type="button" class="btn btn-warning btn-sm" data-id="${p.idPrestamo}" id="btnEditarPrestamo" title="Editar">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        ${p.fechaDevolucion == null ?
-                            "<button type='button' class='btn btn-primary btn-sm btn-entregar' data-id='${p.idPrestamo}' id='btnEntregarPrestamo' title='Entregar'><i class='bi bi-box-arrow-in-down'></i></button>":
-                            ""
+                        ${p.fechaDevolucion === null ?
+                            `<button type="button" class="btn btn-primary btn-sm btn-entregar" data-id="${p.idPrestamo}" id="btnEntregarPrestamo" title="Entregar"><i class="bi bi-box-arrow-in-down"></i></button>`:
+                            ``
                         }
-                        ${p.fechaBaja == null ?
-                            "<button type='button' class='btn btn-danger btn-sm btn-baja' data-id='${p.idPrestamo}' id='btnBajaPrestamo' title='Dar de baja'><i class='bi bi-archive'></i></button>" :
-                            "<button type='button' class='btn btn-success btn-sm btn-reactivar' data-id='${p.idPrestamo}' id='btnReactivarPrestamo' title='Reactivar'><i class='bi bi-arrow-counterclockwise'></i></button>"  
+                        ${p.fechaBaja === null ?
+                            `<button type="button" class="btn btn-danger btn-sm btn-baja" data-id="${p.idPrestamo}" id="btnBajaPrestamo" title="Dar de baja"><i class="bi bi-archive"></i></button>` :
+                            `<button type="button" class="btn btn-success btn-sm btn-reactivar" data-id="${p.idPrestamo}" id="btnReactivarPrestamo" title="Reactivar"><i class="bi bi-arrow-counterclockwise"></i></button>` 
                         }
                     </td>
                 </td>
             </tr>
         `
     ).join("");
-
     tabla.innerHTML = `
         <table class="table table-striped border-dark-subtle align-middle small">
             <thead class="table-dark">
@@ -121,9 +122,22 @@ async function mostrarListadoPrestamos() {
             </tbody>
         </table>
     `;
-
+    registrarEventos();
 }
 
 async function mostrarFormularioNuevoPrestamo() {
 
+}
+
+async function darDeBajaPrestamo(oEvento) {
+    let boton = oEvento.target.closest("button");
+    let idPrestamo = boton.dataset.id;
+    if (!idPrestamo) return;
+
+    let respuesta = await oBiblioteca.cambiarEstadoPrestamo(idPrestamo);
+    alert(respuesta?.mensaje);
+
+    if (respuesta?.ok) {
+        await mostrarListadoPrestamos();
+    }
 }

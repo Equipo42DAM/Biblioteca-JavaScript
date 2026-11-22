@@ -13,7 +13,7 @@ class Prestamo {
     #urlImagen;
     #fechaBaja;
 
-    constructor(idPrestamo, idEjemplar, tituloLibro, fechaPrestamo, fechaLimite, fechaDevolucion, observaciones, importeFianza, tieneFianza, urlImagen) {
+    constructor(idPrestamo, idEjemplar, tituloLibro, fechaPrestamo, fechaLimite, fechaDevolucion, observaciones, importeFianza, tieneFianza, urlImagen, fechaBaja) {
         this.#idPrestamo = idPrestamo;
         this.#idEjemplar = idEjemplar;
         this.#tituloLibro = tituloLibro;
@@ -24,7 +24,7 @@ class Prestamo {
         this.#importeFianza = importeFianza;
         this.#tieneFianza = tieneFianza;
         this.#urlImagen = urlImagen;
-        this.#fechaBaja = null;
+        this.#fechaBaja = fechaBaja;
     }
 
     get idPrestamo() {return this.#idPrestamo;}
@@ -88,5 +88,13 @@ class Biblioteca {
     async listadoPrestamos() {
         let respuesta = await peticionGET("prestamos_listado.php");
         return respuesta;
-  }
+    }
+
+    async cambiarEstadoPrestamo(idPrestamo) {
+        let datos = new FormData();
+        datos.append("idPrestamo", idPrestamo);
+        let respuesta = await peticionPOST("prestamos_cambiar_estado.php", datos);
+        return respuesta;
+    }
+  
 }

@@ -13,7 +13,7 @@ try {
     INNER JOIN libros_manuel l ON e.id_libro = l.id_libro
     WHERE 1=1 ";
 
-    if (!$incluirBajas){
+    if ($incluirBajas){
         $query .= " AND p.fecha_baja IS NULL";
     }
 
