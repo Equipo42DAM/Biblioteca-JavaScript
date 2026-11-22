@@ -1,5 +1,5 @@
     document.addEventListener("DOMContentLoaded", function () {
-      // Diccionario de responsables según el requisito de tu proyecto
+      // Diccionario de responsables
       const responsablesPorSeccion = {
         inicio: "Grupo 4",
         editoriales: "Carlos García",
