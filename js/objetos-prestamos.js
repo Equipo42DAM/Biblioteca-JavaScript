@@ -145,6 +145,13 @@ class Biblioteca {
         return respuesta;
     }
 
+    async finalizarPrestamo(idPrestamo) {
+        let datos = new FormData();
+        datos.append("idPrestamo", idPrestamo);
+        let respuesta = await peticionPOST("prestamos_entregar.php", datos);
+        return respuesta;
+    }
+
     async librosDisponibles(idEjemplar) {
         let datos = new FormData();
         datos.append("idEjemplar", idEjemplar);

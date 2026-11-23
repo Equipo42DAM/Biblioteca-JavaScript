@@ -28,14 +28,21 @@ try {
         $prestamo['observaciones']
     );
 
-    $nuevo_id = 0;
     if ($stmt->execute()) {
         $nuevo_id = $conexion->insert_id;
+        $filas_afectadas = $stmt->affected_rows;
+    } else {
+        $nuevo_id = 0;
+        $filas_afectadas = 0;
     }
-    $mensaje = $nuevo_id == 0 ? "No se ha registrado el nuevo préstamo" : "Guardado el nuevo préstamo";
 
-    responder($nuevo_id, true, $mensaje, $conexion);
+    $stmt->close();
 
+    $ok = $filas_afectadas > 0;
+    $mensaje = $ok ? "Guardado el nuevo préstamo" : "No se ha registrado el nuevo préstamo";
+
+    responder($nuevo_id, $ok, $mensaje, $conexion);
+    
 } catch (mysqli_sql_exception $e) {
     // Errores específicos de mysqli
     responder(null, false, "Error en la base de datos: " . $e->getMessage(), $conexion ?? null);

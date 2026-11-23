@@ -17,9 +17,6 @@ function registrarEventos() {
         .querySelector("#btnMostrarFrmPrestamo")
         .addEventListener("click", mostrarFormularios);
     document
-        .querySelectorAll(".btnBajaPrestamo")
-        .forEach((btn) => btn.addEventListener("click", cambiarEstadoPrestamo));
-    document
         .querySelector("#lstTieneFianza")
         .addEventListener("change", comprobarFianza);
     document
@@ -29,11 +26,17 @@ function registrarEventos() {
         .querySelector("#btnCancelarPrestamo")
         .addEventListener("click", mostrarListadoPrestamos);
     document
+        .querySelectorAll(".btn-baja")
+        .forEach((btn) => btn.addEventListener("click", cambiarEstadoPrestamo));
+    document
         .querySelectorAll(".btn-editar")
         .forEach((btn) => btn.addEventListener("click", mostrarFormularios));
     document
         .querySelectorAll(".btn-reactivar")
         .forEach((btn) => btn.addEventListener("click", cambiarEstadoPrestamo));
+    document
+        .querySelectorAll(".btn-entregar")
+        .forEach((btn) => btn.addEventListener("click", entregarLibro));
 
 
 }
@@ -80,6 +83,42 @@ function ocultarFormularios() {
     document.querySelector("#listadoPrestamos").innerHTML = "";
     document.querySelector("#listadoPrestamos").classList.remove("border");
     document.querySelector("#frmCardPrestamo").classList.add("d-none");
+}
+
+function notificaciones(respuesta) {
+  let contenedor = document.getElementById("contenedorToasts");
+  let status = respuesta.ok ? "success" : "danger";
+
+  if (!contenedor) {
+    contenedor = document.createElement("div");
+    contenedor.id = "contenedorToasts";
+    contenedor.className = "toast-container position-fixed top-0 end-0 p-3";
+    contenedor.style.zIndex = "1100";
+    document.body.appendChild(contenedor);
+  }
+
+  const toastEl = document.createElement("div");
+  toastEl.className = `toast align-items-center text-bg-${status} border-0`;
+  toastEl.setAttribute("role", "alert");
+  toastEl.setAttribute("aria-live", "assertive");
+  toastEl.setAttribute("aria-atomic", "true");
+
+  toastEl.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body shadow-lg">${respuesta.mensaje}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+    </div>
+  `;
+
+  contenedor.appendChild(toastEl);
+
+  const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+  toast.show();
+
+  // Limpiar del DOM cuando desaparezca
+  toastEl.addEventListener("hidden.bs.toast", () => {
+    toastEl.remove();
+  });
 }
 
 async function mostrarListadoPrestamos() {
@@ -142,7 +181,7 @@ async function mostrarListadoPrestamos() {
                 ``
             }
                     ${p.fechaBaja === null ?
-                `<button type="button" class="btn btn-danger btn-sm btn-baja btnBajaPrestamo" data-id="${p.idPrestamo}" title="Dar de baja"><i class="bi bi-archive"></i></button>` :
+                `<button type="button" class="btn btn-danger btn-sm btn-baja" data-id="${p.idPrestamo}" title="Dar de baja"><i class="bi bi-archive"></i></button>` :
                 `<button type="button" class="btn btn-success btn-sm btn-reactivar" data-id="${p.idPrestamo}" title="Reactivar"><i class="bi bi-arrow-counterclockwise"></i></button>`
             }
                 </td>
@@ -185,7 +224,20 @@ async function cambiarEstadoPrestamo(oEvento) {
     if (!idPrestamo) return;
 
     let respuesta = await oBiblioteca.cambiarEstadoPrestamo(idPrestamo);
-    notificaciones(respuesta?.mensaje);
+    notificaciones(respuesta);
+
+    if (respuesta?.ok) {
+        await mostrarListadoPrestamos();
+    }
+}
+
+async function entregarLibro(oEvento) {
+    let boton = oEvento.target.closest("button");
+    let idPrestamo = boton.dataset.id;
+    if (!idPrestamo) return;
+
+    let respuesta = await oBiblioteca.finalizarPrestamo(idPrestamo);
+    notificaciones(respuesta);
 
     if (respuesta?.ok) {
         await mostrarListadoPrestamos();
@@ -287,7 +339,7 @@ async function procesarPrestamo(event) {
 
     let respuesta = await oBiblioteca.crearPrestamo(oPrestamo, archivoImagen);
 
-    notificaciones(respuesta.mensaje);
+    notificaciones(respuesta);
 
     if (respuesta?.ok) {
         frmPrestamo.reset();
@@ -334,7 +386,7 @@ async function editarPrestamo(idPrestamo, datosPrestamo) {
         }
 
         const respuesta = await oBiblioteca.modificarPrestamo(datosPrestamo);
-        notificaciones(respuesta?.mensaje ?? "Operación completada");
+        notificaciones(respuesta);
 
         if (respuesta?.ok) {
             idPrestamoEditando = null;
@@ -347,38 +399,3 @@ async function editarPrestamo(idPrestamo, datosPrestamo) {
     }
 }
 
-function notificaciones(mensaje) {
-  let contenedor = document.getElementById("contenedorToasts");
-  let status = mensaje.ok ? "success" : "danger";
-
-  if (!contenedor) {
-    contenedor = document.createElement("div");
-    contenedor.id = "contenedorToasts";
-    contenedor.className = "toast-container position-fixed top-0 end-0 p-3";
-    contenedor.style.zIndex = "1100";
-    document.body.appendChild(contenedor);
-  }
-
-  const toastEl = document.createElement("div");
-  toastEl.className = `toast align-items-center text-bg-${status} border-0`;
-  toastEl.setAttribute("role", "alert");
-  toastEl.setAttribute("aria-live", "assertive");
-  toastEl.setAttribute("aria-atomic", "true");
-
-  toastEl.innerHTML = `
-    <div class="d-flex">
-      <div class="toast-body">${mensaje}</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
-    </div>
-  `;
-
-  contenedor.appendChild(toastEl);
-
-  const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-  toast.show();
-
-  // Limpiar del DOM cuando desaparezca
-  toastEl.addEventListener("hidden.bs.toast", () => {
-    toastEl.remove();
-  });
-}
