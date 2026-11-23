@@ -107,7 +107,4 @@ Puedes iniciar sesión en la aplicación con los siguientes usuarios predefinido
 
 * **Administrador:**
   * *Usuario:* `admin`
-  * *Contraseña:* `admin123`
-* **Personal de Gestión:**
-  * *Usuario:* `usuario1`
-  * *Contraseña:* `user123`
+  * *Contraseña:* `admin`
