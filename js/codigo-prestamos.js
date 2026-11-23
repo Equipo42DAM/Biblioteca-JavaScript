@@ -185,7 +185,7 @@ async function cambiarEstadoPrestamo(oEvento) {
     if (!idPrestamo) return;
 
     let respuesta = await oBiblioteca.cambiarEstadoPrestamo(idPrestamo);
-    alert(respuesta?.mensaje);
+    notificaciones(respuesta?.mensaje);
 
     if (respuesta?.ok) {
         await mostrarListadoPrestamos();
@@ -237,6 +237,8 @@ async function comprobarFianza() {
     frmPrestamo.importeFianza.disabled = option === "0" ? true : false;
 }
 
+// Esta funciona procesa los datos del formulario para registrar un prestamos
+// El formulario es compartido para editar y nuevo
 async function procesarPrestamo(event) {
     if(event) event.preventDefault();
 
@@ -284,7 +286,8 @@ async function procesarPrestamo(event) {
     }
 
     let respuesta = await oBiblioteca.crearPrestamo(oPrestamo, archivoImagen);
-    alert(respuesta?.mensaje);
+
+    notificaciones(respuesta.mensaje);
 
     if (respuesta?.ok) {
         frmPrestamo.reset();
@@ -331,7 +334,7 @@ async function editarPrestamo(idPrestamo, datosPrestamo) {
         }
 
         const respuesta = await oBiblioteca.modificarPrestamo(datosPrestamo);
-        alert(respuesta?.mensaje ?? "Operación completada");
+        notificaciones(respuesta?.mensaje ?? "Operación completada");
 
         if (respuesta?.ok) {
             idPrestamoEditando = null;
@@ -340,7 +343,42 @@ async function editarPrestamo(idPrestamo, datosPrestamo) {
             await mostrarListadoPrestamos();
         }
     } catch (error) {
-        console.error("Error al editar préstamo:", error);
-        alert(error?.message || "Error al guardar los cambios");
+        notificaciones(error?.message || "Error al guardar los cambios");
     }
+}
+
+function notificaciones(mensaje) {
+  let contenedor = document.getElementById("contenedorToasts");
+  let status = mensaje.ok ? "success" : "danger";
+
+  if (!contenedor) {
+    contenedor = document.createElement("div");
+    contenedor.id = "contenedorToasts";
+    contenedor.className = "toast-container position-fixed top-0 end-0 p-3";
+    contenedor.style.zIndex = "1100";
+    document.body.appendChild(contenedor);
+  }
+
+  const toastEl = document.createElement("div");
+  toastEl.className = `toast align-items-center text-bg-${status} border-0`;
+  toastEl.setAttribute("role", "alert");
+  toastEl.setAttribute("aria-live", "assertive");
+  toastEl.setAttribute("aria-atomic", "true");
+
+  toastEl.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body">${mensaje}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+    </div>
+  `;
+
+  contenedor.appendChild(toastEl);
+
+  const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+  toast.show();
+
+  // Limpiar del DOM cuando desaparezca
+  toastEl.addEventListener("hidden.bs.toast", () => {
+    toastEl.remove();
+  });
 }
