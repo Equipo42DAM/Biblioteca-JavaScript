@@ -79,6 +79,16 @@ La base de datos **`biblioteca_ohara`** consta de tablas relacionadas entre sí 
 
 ---
 
+## 🔐 Gestión de Sesión, Roles y Reglas de Préstamos
+
+* **Sesión por defecto (`usuario`):** al cargar la aplicación, el sistema inicia automáticamente en modo `usuario` (recuperando el usuario por defecto o un respaldo local en `sessionStorage`), mostrando el rol y el avatar correspondiente en la interfaz.
+* **Elevación a `admin`:** desde el panel de inicio de sesión de administrador (en escritorio o móvil), introduciendo la contraseña de `admin` mediante petición asíncrona a `login.php`, se activa el rol `admin` en `sessionStorage`, se refrescan las vistas activas y se habilita el botón de **Cerrar sesión** para volver al modo `usuario`.
+* **Visibilidad en Préstamos (`prestamos_juanjorpa`):**
+  * **Por defecto (modo `usuario`):** solo se muestran los préstamos activos que **no están devueltos** ni **dados de baja**.
+  * **Modo `admin`:** únicamente el rol `admin` puede visualizar el resto de registros (incluyendo préstamos devueltos o dados de baja).
+
+---
+
 ## ⚙️ Instrucciones de Instalación y Ejecución Local
 
 1. **Clonar o descargar el repositorio** en tu equipo local.
