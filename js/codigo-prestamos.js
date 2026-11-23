@@ -86,52 +86,58 @@ function ocultarFormularios() {
 }
 
 function notificaciones(respuesta) {
-  let contenedor = document.getElementById("contenedorToasts");
-  let status = respuesta.ok ? "success" : "danger";
+    let contenedor = document.getElementById("contenedorToasts");
+    let status = respuesta.ok ? "success" : "danger";
 
-  if (!contenedor) {
-    contenedor = document.createElement("div");
-    contenedor.id = "contenedorToasts";
-    contenedor.className = "toast-container position-fixed top-0 end-0 p-3";
-    contenedor.style.zIndex = "1100";
-    document.body.appendChild(contenedor);
-  }
+    if (!contenedor) {
+        contenedor = document.createElement("div");
+        contenedor.id = "contenedorToasts";
+        contenedor.className = "toast-container position-fixed top-0 end-0 p-3";
+        contenedor.style.zIndex = "1100";
+        document.body.appendChild(contenedor);
+    }
 
-  const toastEl = document.createElement("div");
-  toastEl.className = `toast align-items-center text-bg-${status} border-0`;
-  toastEl.setAttribute("role", "alert");
-  toastEl.setAttribute("aria-live", "assertive");
-  toastEl.setAttribute("aria-atomic", "true");
+    const toastEl = document.createElement("div");
+    toastEl.className = `toast align-items-center text-bg-${status} border-0`;
+    toastEl.setAttribute("role", "alert");
+    toastEl.setAttribute("aria-live", "assertive");
+    toastEl.setAttribute("aria-atomic", "true");
 
-  toastEl.innerHTML = `
+    toastEl.innerHTML = `
     <div class="d-flex">
       <div class="toast-body shadow-lg">${respuesta.mensaje}</div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
     </div>
   `;
 
-  contenedor.appendChild(toastEl);
+    contenedor.appendChild(toastEl);
 
-  const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
-  toast.show();
+    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+    toast.show();
 
-  // Limpiar del DOM cuando desaparezca
-  toastEl.addEventListener("hidden.bs.toast", () => {
-    toastEl.remove();
-  });
+    // Limpiar del DOM cuando desaparezca
+    toastEl.addEventListener("hidden.bs.toast", () => {
+        toastEl.remove();
+    });
 }
 
 async function mostrarListadoPrestamos() {
     ocultarFormularios();
-    let respuesta = await oBiblioteca.listadoPrestamos();
+    const esAdmin = (sessionStorage.getItem("rol") || "usuario") === "admin";
+    const respuesta = await oBiblioteca.listadoPrestamos();
 
     const tabla = document.querySelector("#listadoPrestamos");
-    const filas = respuesta.datos ?? [];
+    let filas = respuesta.datos ?? [];
+
+    if (!esAdmin) {
+        filas = filas.filter((f) => !f.fecha_baja && !f.fecha_devolucion);
+    }
+
     tabla.classList.add("border");
     if (!respuesta.ok || filas.length === 0) {
         tabla.innerHTML = `
             <div class="alert alert-info text-center" role="alert">
-                ${respuesta.mensaje || "No hay préstamos para mostrar."}
+                ${respuesta.mensaje || "No hay préstamos disponibles para mostrar."}
             </div>
         `;
         return;
@@ -152,7 +158,7 @@ async function mostrarListadoPrestamos() {
                 fila.url_imagen,
                 fila.fecha_baja
             )
-    )
+    );
 
     const cuerpoTabla = prestamos.map(
         (p) => `
@@ -292,7 +298,7 @@ async function comprobarFianza() {
 // Esta funciona procesa los datos del formulario para registrar un prestamos
 // El formulario es compartido para editar y nuevo
 async function procesarPrestamo(event) {
-    if(event) event.preventDefault();
+    if (event) event.preventDefault();
 
     const prestamoActual = idPrestamoEditando
         ? listaPrestamos.find((p) => String(p.idPrestamo) === String(idPrestamoEditando))

@@ -2,11 +2,11 @@
 
 const IMG_USUARIO_DEF = "img/usuarios/U02.webp";
 const $ = (id) => document.getElementById(id);
+const pintarEn = (ids, fn) => ids.forEach((id) => { const el = $(id); if (el) fn(el); });
 
 const notificar = (ok, mensaje) => {
-    const resp = { ok, mensaje };
     const fn = window.mostrarNotificacion || window.notificaciones;
-    typeof fn === "function" ? fn(resp) : alert(mensaje);
+    typeof fn === "function" ? fn({ ok, mensaje }) : alert(mensaje);
 };
 
 async function postLogin(campos) {
@@ -17,15 +17,10 @@ async function postLogin(campos) {
 }
 
 function togglePanelAdmin(abrir, modo = "escritorio") {
-    const pEsc = $("panelLoginAdmin"), pMov = $("panelLoginAdminMovil");
-    const iEsc = $("passAdmin"), iMov = $("passAdminMovil");
-
-    if (iEsc) iEsc.value = "";
-    if (iMov) iMov.value = "";
-
-    pEsc?.classList.toggle("d-none", !abrir || modo !== "escritorio");
-    pMov?.classList.toggle("d-none", !abrir || modo !== "movil");
-    if (abrir) (modo === "movil" ? iMov : iEsc)?.focus();
+    pintarEn(["passAdmin", "passAdminMovil"], (i) => { i.value = ""; });
+    $("panelLoginAdmin")?.classList.toggle("d-none", !abrir || modo !== "escritorio");
+    $("panelLoginAdminMovil")?.classList.toggle("d-none", !abrir || modo !== "movil");
+    if (abrir) $((modo === "movil" ? "passAdminMovil" : "passAdmin"))?.focus();
 }
 
 function establecerSesion(usuarioObj) {
@@ -33,6 +28,10 @@ function establecerSesion(usuarioObj) {
     sessionStorage.setItem("usuario", JSON.stringify({ ...usuarioObj, rol }));
     sessionStorage.setItem("rol", rol);
     aplicarEstadoSesion();
+
+    if ($("frmCardPrestamo")?.classList.contains("d-none") && typeof mostrarListadoPrestamos === "function") {
+        mostrarListadoPrestamos();
+    }
 }
 
 async function loginAdmin(inputId) {
@@ -59,20 +58,17 @@ async function loginAdmin(inputId) {
 }
 
 async function cargarUsuarioNormal(notificarCierre = false) {
+    const fallback = { username: "usuario", nombre_completo: "Usuario", rol: "usuario", url_imagen: IMG_USUARIO_DEF };
     try {
         const data = await postLogin({ accion: "usuario_defecto" });
-        if (data?.ok && data.datos) {
-            establecerSesion({ ...data.datos, rol: "usuario", url_imagen: data.datos.url_imagen || IMG_USUARIO_DEF });
-            if (notificarCierre) notificar(true, "Sesión de administrador cerrada");
-            return;
-        }
+        const base = data?.ok && data.datos ? data.datos : fallback;
+        establecerSesion({ ...base, rol: "usuario", url_imagen: base.url_imagen || IMG_USUARIO_DEF });
+        if (notificarCierre) notificar(true, "Sesión de administrador cerrada");
     } catch (err) {
         console.error("Error al recuperar usuario normal:", err);
+        establecerSesion(fallback);
         if (notificarCierre) notificar(false, "Error al cerrar la sesión");
     }
-
-    establecerSesion({ username: "usuario", nombre_completo: "Usuario", rol: "usuario", url_imagen: IMG_USUARIO_DEF });
-    if (notificarCierre) notificar(true, "Sesión de administrador cerrada");
 }
 
 function syncBtnCerrar(contenedorId, btnId, esAdmin, html, extraClass = "") {
@@ -83,13 +79,13 @@ function syncBtnCerrar(contenedorId, btnId, esAdmin, html, extraClass = "") {
     if (!esAdmin) return btn?.remove();
     if (btn) return;
 
-    const nuevo = document.createElement("button");
-    nuevo.type = "button";
-    nuevo.id = btnId;
-    nuevo.className = `btn btn-outline-danger btn-sm ${extraClass}`.trim();
-    nuevo.title = "Cerrar sesión";
-    nuevo.dataset.accion = "cerrar-sesion";
-    nuevo.innerHTML = html;
+    const nuevo = Object.assign(document.createElement("button"), {
+        type: "button",
+        id: btnId,
+        className: `btn btn-outline-danger btn-sm ${extraClass}`.trim(),
+        title: "Cerrar sesión",
+        innerHTML: html
+    });
     cont.appendChild(nuevo);
 }
 
@@ -103,19 +99,12 @@ function aplicarEstadoSesion() {
     const nombre = u.nombre_completo || u.username || "Usuario";
     const img = u.url_imagen || (esAdmin ? "" : IMG_USUARIO_DEF);
 
-    const pintar = (ids, fn) => ids.forEach((id) => { const el = $(id); if (el) fn(el); });
-
-    pintar(["badgeRolActual", "badgeRolMovil"], (el) => {
+    pintarEn(["badgeRolActual", "badgeRolMovil"], (el) => {
         el.textContent = rol;
         el.className = esAdmin ? "badge bg-success" : "badge bg-secondary";
     });
-    pintar(["nombreUsuarioActual", "nombreUsuarioMovil"], (el) => {
-        el.textContent = nombre;
-    });
-    pintar(["avatarUsuarioActual", "avatarUsuarioMovil"], (el) => {
-        el.src = img;
-        el.alt = nombre;
-    });
+    pintarEn(["nombreUsuarioActual", "nombreUsuarioMovil"], (el) => { el.textContent = nombre; });
+    pintarEn(["avatarUsuarioActual", "avatarUsuarioMovil"], (el) => { el.src = img; el.alt = nombre; });
 
     syncBtnCerrar("contenedorAccionesSesion", "btnCerrarSesion", esAdmin, '<i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión');
     syncBtnCerrar("contenedorAccionesMovil", "btnCerrarSesionMovil", esAdmin, '<i class="bi bi-box-arrow-right"></i>', "py-0 px-2");
@@ -128,20 +117,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         aplicarEstadoSesion();
     }
 
-    const accionesClick = {
+    const cerrarSesion = async () => { await cargarUsuarioNormal(true); togglePanelAdmin(false); };
+    const clicks = {
         btnAbrirSesionAdmin: () => togglePanelAdmin(true, "escritorio"),
         btnAbrirSesionAdminMovil: () => togglePanelAdmin(true, "movil"),
         btnCancelarAdmin: () => togglePanelAdmin(false),
         btnCancelarAdminMovil: () => togglePanelAdmin(false),
         btnConfirmarAdmin: () => loginAdmin("passAdmin"),
         btnConfirmarAdminMovil: () => loginAdmin("passAdminMovil"),
-        btnCerrarSesion: async () => { await cargarUsuarioNormal(true); togglePanelAdmin(false); },
-        btnCerrarSesionMovil: async () => { await cargarUsuarioNormal(true); togglePanelAdmin(false); }
+        btnCerrarSesion: cerrarSesion,
+        btnCerrarSesionMovil: cerrarSesion
     };
 
     document.addEventListener("click", (e) => {
-        const btn = e.target.closest("button");
-        if (btn && accionesClick[btn.id]) accionesClick[btn.id]();
+        const id = e.target.closest("button")?.id;
+        if (id && clicks[id]) clicks[id]();
     });
 
     document.addEventListener("keydown", async (e) => {

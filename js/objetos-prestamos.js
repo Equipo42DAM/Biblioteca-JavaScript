@@ -134,8 +134,9 @@ class Biblioteca {
     }
 
     async listadoPrestamos() {
-        let respuesta = await peticionGET("prestamos_listado.php");
-        return respuesta;
+        const datos = new FormData();
+        datos.append("rol", sessionStorage.getItem("rol") || "usuario");
+        return await peticionPOST("prestamos_listado.php", datos);
     }
 
     async cambiarEstadoPrestamo(idPrestamo) {
