@@ -1,176 +1,143 @@
 "use strict";
 
-/**
- * Clase Pais: contiene lo necesario para la creación de un objeto Pais
- */
 class Pais {
+    #idPais;
+    #nombrePais;
+
     constructor(idPais, nombrePais) {
-        this.idPais = idPais
-        this.nombrePais = nombrePais
+        this.#idPais = idPais;
+        this.#nombrePais = nombrePais;
     }
 
-    getIdPais() {
-        return this.idPais
+    get idPais() {
+        return this.#idPais;
+    }
+    set idPais(valor) {
+        this.#idPais = valor;
     }
 
-    setIdPais(idPais) {
-        this.idPais = idPais
+    get nombrePais() {
+        return this.#nombrePais;
+    }
+    set nombrePais(valor) {
+        this.#nombrePais = valor;
     }
 
-    getNombrePais() {
-        return this.nombrePais
-    }
-
-    setNombrePais(nombrePais) {
-        this.nombrePais = nombrePais
+    toJSON() {
+        return {
+            idPais: this.#idPais,
+            nombrePais: this.#nombrePais,
+        };
     }
 }
 
-/**
- * Clase Editorial: contiene lo necesario para la creación de un objeto Editorial
- * 
- * 'idPais' es asignado como la clave foránea de la clase Pais
- */
 class Editorial {
+    #idPais;
+    #nombre;
+    #contacto;
+    #urlimagen;
+    #edita_espanol;
+    #anno_origen;
+
     constructor(idPais, nombre, contacto, urlimagen, edita_espanol, anno_origen) {
-        this.idPais = idPais
-        this.nombre = nombre
-        this.contacto = contacto
-        this.urlimagen = urlimagen
-        this.edita_espanol = edita_espanol
-        this.anno_origen = anno_origen
+        this.#idPais = idPais;
+        this.#nombre = nombre;
+        this.#contacto = contacto;
+        this.#urlimagen = urlimagen;
+        this.#edita_espanol = edita_espanol;
+        this.#anno_origen = anno_origen;
     }
 
-    getIdPais() {
-        return this.idPais
+    get idPais() {
+        return this.#idPais;
+    }
+    set idPais(valor) {
+        this.#idPais = valor;
     }
 
-    setIdPais(idPais) {
-        this.idPais = idPais
+    get nombre() {
+        return this.#nombre;
+    }
+    set nombre(valor) {
+        this.#nombre = valor;
     }
 
-    getNombre() {
-        return this.nombre
+    get contacto() {
+        return this.#contacto;
+    }
+    set contacto(valor) {
+        this.#contacto = valor;
     }
 
-    setNombre(nombre) {
-        this.nombre = nombre
+    get urlimagen() {
+        return this.#urlimagen;
+    }
+    set urlimagen(valor) {
+        this.#urlimagen = valor;
     }
 
-    getContacto() {
-        return this.contacto
+    get edita_espanol() {
+        return this.#edita_espanol;
+    }
+    set edita_espanol(valor) {
+        this.#edita_espanol = valor;
     }
 
-    setContacto(contacto) {
-        this.contacto = contacto
+    get anno_origen() {
+        return this.#anno_origen;
+    }
+    set anno_origen(valor) {
+        this.#anno_origen = valor;
     }
 
-    getUrlimagen() {
-        return this.urlimagen
-    }
-
-    setUrlimagen(urlimagen) {
-        this.urlimagen = urlimagen
-    }
-
-    isEdita_espanol() {
-        return this.edita_espanol
-    }
-
-    setEdita_espanol(edita_espanol) {
-        this.edita_espanol = edita_espanol
-    }
-
-    getAnno_origen() {
-        return this.anno_origen
-    }
-
-    setAnno_origen(anno_origen) {
-        this.anno_origen = anno_origen
+    toJSON() {
+        return {
+            idPais: this.#idPais,
+            nombre: this.#nombre,
+            contacto: this.#contacto,
+            urlimagen: this.#urlimagen,
+            edita_espanol: this.#edita_espanol,
+            anno_origen: this.#anno_origen,
+        };
     }
 }
 
-/**
- * Clase encargada de empaquetar los datos vía fetch para ser procesados por el lado servidor (PHP)
- */
 class GestorEditorial {
-
-    // Función asíncrona para el alta de editorial
     async altaEditorial(oEditorial) {
-        // Creamos un nuevo FormData y le añadimos los campos con getters
-        let datosForm = new FormData();
-        datosForm.append(oEditorial.getIdpais());
-        datosForm.append(oEditorial.getNombre());
-        datosForm.append(oEditorial.getContacto());
-        datosForm.append(oEditorial.getUrlimagen());
-        datosForm.append(oEditorial.isEdita_espanol());
-        datosForm.append(oEditorial.getAnno_origen());
+        let datos = new FormData();
 
-        // Creamos una petición para crear_editorial.php que será esperada. Sucede mediante POST
-        let peticionFetch = await fetch(rutaBackend + "crear_editorial.php", {
-            method: "POST",
-            body: datosForm
-        })
+        datos.append("editorial", JSON.stringify(oEditorial)); // $editorial = json_decode($_POST["editorial"])
 
-        // La respuesta de lado servidor llega en formato JSON
-        let respuestaPhp = await peticionFetch.json();
+        let respuesta = await peticionPOST("crear_editorial.php", datos);
 
-        // Si algo ha ido mal, lanza un error con su respectivo código
-        if (!peticionFetch.ok) {
-            throw new error("El servidor falló (" + peticionFetch.status + "): " + respuestaPhp);
-        }
-
-        // Si no ha ido mal, muestra al usuario por pantalla
-        alert("Editorial creada exitosamente.");
+        return respuesta;
     }
 
-    // Función asíncrona para la baja de editorial
     async bajaEditorial(oEditorial) {
+        let datos = new FormData();
 
-        let datosForm = new FormData();
-        datosForm.append(oEditorial.getIdpais());
-        datosForm.append(oEditorial.getNombre());
-        datosForm.append(oEditorial.getContacto());
-        datosForm.append(oEditorial.getUrlimagen());
-        datosForm.append(oEditorial.isEdita_espanol());
-        datosForm.append(oEditorial.getAnno_origen());
+        datos.append("editorial", JSON.stringify(oEditorial));
 
-        let peticionFetch = await fetch(rutaBackend + "eliminar_editorial.php", {
-            method: "POST",
-            body: datosForm
-        })
+        let respuesta = await peticionPOST("eliminar_editorial.php", datos);
 
-        let respuestaPhp = await peticionFetch.json();
-
-        if (!peticionFetch.ok) {
-            throw new error("El servidor falló (" + peticionFetch.status + "): " + respuestaPhp);
-        }
-
-        alert("Editorial eliminada exitosamente.");
+        return respuesta;
     }
 
-    // Función asíncrona para la modificación de una editorial
     async modificarEditorial(oEditorial) {
+        let datos = new FormData();
 
-        let datosForm = new FormData();
-        datosForm.append(oEditorial.getIdpais());
-        datosForm.append(oEditorial.getNombre());
-        datosForm.append(oEditorial.getContacto());
-        datosForm.append(oEditorial.getUrlimagen());
-        datosForm.append(oEditorial.isEdita_espanol());
-        datosForm.append(oEditorial.getAnno_origen());
+        datos.append("editorial", JSON.stringify(oEditorial));
 
-        let peticionFetch = await fetch(rutaBackend + "modificar_editorial.php", {
-            method: "POST",
-            body: datosForm
-        })
+        let respuesta = await peticionPOST("modificar_editorial.php", datos);
 
-        let respuestaPhp = await peticionFetch.json();
+        return respuesta;
+    }
 
-        if (!peticionFetch.ok) {
-            throw new error("El servidor falló (" + peticionFetch.status + "): " + respuestaPhp);
-        }
+    async getEditoriales() {
+        return await peticionGET("get_editoriales.php", new FormData());
+    }
 
-        alert("Editorial modificada exitosamente")
+    async getPaises() {
+        return await peticionGET("get_paises.php", new FormData());
     }
 }

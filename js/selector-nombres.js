@@ -34,7 +34,7 @@
           }
         });
 
-        // 4. Actualizar dinámicamente el nombre del responsable según el diccionario
+        // 4. Actualizar dinámicamente el nombre del responsable según el diccionarioa
         if (elementoResponsable) {
           elementoResponsable.textContent = responsablesPorSeccion[seccionDeseada] || "Bibliotecario en Turno";
         }
