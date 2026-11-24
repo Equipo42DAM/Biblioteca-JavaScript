@@ -112,12 +112,9 @@
 
       <section id="sec-editoriales" class="seccion-spa d-none">
         <h2>Gestión de Editoriales</h2>
-        <!-- Aquí irá tu tabla y formulario de editoriales -->
+
         <!-- Contenedor principal -->
         <div class="container my-4">
-          <!-- ==========================================
-             VISTA 1: LISTADO DE EDITORIALES
-             ========================================== -->
           <div id="vistaListadoEditoriales">
             <div class="d-flex justify-content-between align-items-center border-bottom border-dark-subtle pb-2 mb-4">
               <h2>Listado de editoriales</h2>
@@ -154,10 +151,6 @@
             </nav>
           </div>
 
-
-          <!-- ==========================================
-             VISTA 2: ALTA DE EDITORIAL (Oculta por defecto)
-             ========================================== -->
           <div id="vistaAltaEditorial" class="d-none">
             <form id="frmAltaEditorial">
               <legend class="border-bottom pb-2 mb-4">Alta de editorial</legend>
@@ -232,10 +225,6 @@
             </form>
           </div>
 
-
-          <!-- ==========================================
-             VISTA 3: MODIFICAR EDITORIAL (Oculta por defecto)
-             ========================================== -->
           <div id="vistaModificarEditorial" class="d-none">
             <form id="frmModificarEditorial">
               <!-- Campos ocultos que JS rellenará antes de mostrar el formulario -->
@@ -256,8 +245,31 @@
 
                 <div class="col-md-6 mb-3">
                   <label for="selectPaisMod" class="form-label">País</label>
-                  <select class="form-select" id="selectPaisMod" required>
-                    <option value="" selected disabled> -- Seleccione un país -- </option>
+                  <!-- Las opciones las inyectará tu codigo.js, dejamos solo la principal -->
+                  <select class="form-select" id="selectPaisMod" name="pais" required>
+                    <option value="" selected disabled>-- Selecciona un país --</option>
+                    <option value="1">Alemania</option>
+                    <option value="2">Argentina</option>
+                    <option value="3">Australia</option>
+                    <option value="4">Belgica</option>
+                    <option value="5">Brasil</option>
+                    <option value="6">Canada</option>
+                    <option value="7">Chile</option>
+                    <option value="8">China</option>
+                    <option value="9">Colombia</option>
+                    <option value="10">Corea del Sur</option>
+                    <option value="11">Espana</option>
+                    <option value="12">Estados Unidos</option>
+                    <option value="13">Francia</option>
+                    <option value="14">Holanda</option>
+                    <option value="15">Italia</option>
+                    <option value="16">Japon</option>
+                    <option value="17">Mexico</option>
+                    <option value="18">Peru</option>
+                    <option value="19">Portugal</option>
+                    <option value="20">Reino Unido</option>
+                    <option value="21">Suecia</option>
+                    <option value="22">Suiza</option>
                   </select>
                 </div>
 
@@ -280,7 +292,7 @@
 
                   <div class="mt-2">
                     <small class="text-muted d-block mb-1">Imagen actual: </small>
-                    <img id="imgPreviaMod" src="" alt="Vista previa" class="img-thumbnail img-miniatura-form">
+                    <img id="imgPreviaMod" src="" alt="Vista previa" width="90" height="90" class="border rounded p-1 bg-white object-fit-contain">
                   </div>
                 </div>
               </div>
@@ -293,10 +305,6 @@
           </div>
         </div>
 
-
-        <!-- ==========================================
-         MODALES (Fuera de las vistas y tablas)
-         ========================================== -->
         <div class="modal fade" id="modalBaja" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
           aria-labelledby="modalLabel" aria-hidden="true">
           <div class="modal-dialog">
@@ -344,8 +352,8 @@
   <!-- Script para el cambio de nombre dinamicamente -->
   <script src="js/selector-nombres.js"></script>
   <script src="js/ajax.js"></script>
-  <script src="js/objetos.js"></script>
-  <script src="js/codigo.js"></script>
+  <script src="js/objetos-editoriales.js"></script>
+  <script src="js/codigo-editoriales.js"></script>
 </body>
 
 </html>

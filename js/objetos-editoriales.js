@@ -32,6 +32,7 @@ class Pais {
 }
 
 class Editorial {
+    #idEditorial;
     #idPais;
     #nombre;
     #contacto;
@@ -39,13 +40,21 @@ class Editorial {
     #edita_espanol;
     #anno_origen;
 
-    constructor(idPais, nombre, contacto, urlimagen, edita_espanol, anno_origen) {
+    constructor(idEditorial, idPais, nombre, contacto, urlimagen, edita_espanol, anno_origen) {
+        this.#idEditorial = idEditorial;
         this.#idPais = idPais;
         this.#nombre = nombre;
         this.#contacto = contacto;
         this.#urlimagen = urlimagen;
         this.#edita_espanol = edita_espanol;
         this.#anno_origen = anno_origen;
+    }
+
+    get idEditorial() {
+        return this.#idEditorial;
+    }
+    set idEditorial(valor) {
+        this.#idEditorial = valor;
     }
 
     get idPais() {
@@ -92,12 +101,13 @@ class Editorial {
 
     toJSON() {
         return {
-            idPais: this.#idPais,
-            nombre: this.#nombre,
+            id_editorial: this.#idEditorial,
+            id_pais: this.#idPais,
+            nombre_comercial: this.#nombre,
             contacto: this.#contacto,
-            urlimagen: this.#urlimagen,
+            url_imagen: this.#urlimagen,
             edita_espanol: this.#edita_espanol,
-            anno_origen: this.#anno_origen,
+            anio_origen: this.#anno_origen,
         };
     }
 }
@@ -105,32 +115,23 @@ class Editorial {
 class GestorEditorial {
     async altaEditorial(oEditorial) {
         let datos = new FormData();
-
-        datos.append("editorial", JSON.stringify(oEditorial)); // $editorial = json_decode($_POST["editorial"])
-
-        let respuesta = await peticionPOST("crear_editorial.php", datos);
-
-        return respuesta;
+        datos.append("editorial", JSON.stringify(oEditorial));
+        return await peticionPOST("crear_editorial.php", datos);
     }
 
-    async bajaEditorial(oEditorial) {
+    async modificarEditorial(oEditorial, archivoImagen = null) {
         let datos = new FormData();
-
         datos.append("editorial", JSON.stringify(oEditorial));
-
-        let respuesta = await peticionPOST("eliminar_editorial.php", datos);
-
-        return respuesta;
+        if (archivoImagen) {
+            datos.append("imagen", archivoImagen);
+        }
+        return await peticionPOST("modificar_editorial.php", datos);
     }
 
-    async modificarEditorial(oEditorial) {
+    async bajaEditorial(idEditorial) {
         let datos = new FormData();
-
-        datos.append("editorial", JSON.stringify(oEditorial));
-
-        let respuesta = await peticionPOST("modificar_editorial.php", datos);
-
-        return respuesta;
+        datos.append("idEditorial", idEditorial);
+        return await peticionPOST("eliminar_editorial.php", datos);
     }
 
     async getEditoriales() {
