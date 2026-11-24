@@ -1,3 +1,15 @@
+<<<<<<< HEAD
+=======
+    document.addEventListener("DOMContentLoaded", function () {
+      // Diccionario de responsables
+      const responsablesPorSeccion = {
+        inicio: "Grupo 4",
+        editoriales: "Carlos García",
+        libros: "Manuel Orozco",
+        ejemplares: "Juan José Lobo",
+        prestamos: "Juan José Rodríguez-Prat"
+      };
+>>>>>>> ramaCarlos
 
 document.addEventListener("DOMContentLoaded", function () {
   // Diccionario de responsables según el requisito de tu proyecto
@@ -20,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
       seccionDeseada = "inicio";
     }
 
+<<<<<<< HEAD
     // 1. Ocultar todas las secciones
     document.querySelectorAll(".seccion-spa").forEach((sec) => {
       sec.classList.add("d-none");
@@ -56,6 +69,12 @@ document.addEventListener("DOMContentLoaded", function () {
       // Actualizar la URL sin recargar la página
       if (window.location.hash !== `#${seccion}`) {
         history.pushState(null, "", `#${seccion}`);
+=======
+        // 4. Actualizar dinámicamente el nombre del responsable según el diccionarioa
+        if (elementoResponsable) {
+          elementoResponsable.textContent = responsablesPorSeccion[seccionDeseada] || "Bibliotecario en Turno";
+        }
+>>>>>>> ramaCarlos
       }
 
       cambiarSeccion(seccion);
