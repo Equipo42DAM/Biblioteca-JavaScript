@@ -16,38 +16,10 @@ function mostrarToastLibro(mensaje, tipo = "success") {
     toastBootstrap.show();
 }
 
-let enlacesMenu = document.querySelectorAll("[data-section]");
-for (let i = 0; i < enlacesMenu.length; i++) {
-    enlacesMenu[i].addEventListener("click", function (evento) {
-        evento.preventDefault();
-        let seccion = enlacesMenu[i].getAttribute("data-section");
-        mostrarSeccion(seccion);
-    });
-}
-
-function mostrarSeccion(nombreSeccion) {
-    let secciones = document.querySelectorAll(".seccion-spa");
-    for (let i = 0; i < secciones.length; i++) {
-        if (secciones[i].id === "sec-" + nombreSeccion) {
-            secciones[i].classList.remove("d-none");
-        } else {
-            secciones[i].classList.add("d-none");
-        }
-    }
-
-    for (let i = 0; i < enlacesMenu.length; i++) {
-        if (enlacesMenu[i].getAttribute("data-section") === nombreSeccion) {
-            enlacesMenu[i].classList.add("active");
-        } else {
-            enlacesMenu[i].classList.remove("active");
-        }
-    }
-
-    if (nombreSeccion === "libros") {
-        mostrarVistaListado();
-        cargarEditorialesLibro();
-        traerLibros();
-    }
+function inicializarSeccionLibros() {
+    mostrarVistaListado();
+    cargarEditorialesLibro();
+    traerLibros();
 }
 
 async function cargarEditorialesLibro() {
@@ -358,5 +330,3 @@ async function mostrarVistaFormulario(libro) {
     document.querySelector("#vista-listado-libros").classList.add("d-none");
     document.querySelector("#vista-formulario-libro").classList.remove("d-none");
 }
-
-mostrarSeccion("inicio");
