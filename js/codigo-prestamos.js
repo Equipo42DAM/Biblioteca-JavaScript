@@ -4,7 +4,9 @@ var oBiblioteca = new Biblioteca();
 let listaPrestamos = [];
 let idPrestamoEditando = null;
 
-mostrarListadoPrestamos();
+document.addEventListener("DOMContentLoaded", () => {
+  mostrarListadoPrestamos();
+});
 
 function registrarEventos() {
     document
