@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" class="h-100">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel de Administración - Biblioteca Ohara</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -11,6 +11,14 @@
 
 <body class="d-flex flex-column vh-100 bg-light m-0 overflow-hidden">
 
+  <!-- Bootstrap 6 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+</head>
+
+<body class="d-flex flex-column vh-100 bg-light m-0 overflow-hidden">
+  <!-- Barra de navegación superior para móviles -->
   <div class="d-md-none bg-dark text-white p-2 d-flex align-items-center overflow-auto shadow-sm flex-shrink-0">
     <a href="#" class="text-white text-decoration-none me-3 d-flex align-items-center flex-shrink-0 ps-2">
       <i class="bi bi-book-half text-success fs-6 me-1"></i>
@@ -18,38 +26,104 @@
     </a>
     <ul class="nav nav-pills flex-row flex-nowrap gap-1">
       <li class="nav-item">
-        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="inicio" title="Inicio"><i class="bi bi-speedometer2"></i></a>
+        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="inicio" title="Inicio"><i
+            class="bi bi-speedometer2"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="editoriales" title="Editoriales"><i class="bi bi-building"></i></a>
+        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="editoriales" title="Editoriales"><i
+            class="bi bi-building"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="libros" title="Libros"><i class="bi bi-journal-bookmark"></i></a>
+        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="libros" title="Libros"><i
+            class="bi bi-journal-bookmark"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="ejemplares" title="Ejemplares"><i class="bi bi-qr-code-scan"></i></a>
+        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="ejemplares" title="Ejemplares"><i
+            class="bi bi-qr-code-scan"></i></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="prestamos" title="Préstamos"><i class="bi bi-arrow-left-right"></i></a>
+        <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="prestamos" title="Préstamos"><i
+            class="bi bi-arrow-left-right"></i></a>
       </li>
     </ul>
+  <div
+    class="d-md-none bg-dark text-white p-2 d-flex align-items-center justify-content-between overflow-auto shadow-sm flex-shrink-0 gap-2">
+    <div class="d-flex align-items-center flex-shrink-0">
+      <a href="#" data-section="inicio"
+        class="logo-inicio text-white text-decoration-none me-2 d-flex align-items-center flex-shrink-0 ps-1">
+        <i class="bi bi-book-half text-success fs-6 me-1"></i>
+        <span class="fw-bold text-nowrap fs-6">Biblioteca Ohara</span>
+      </a>
+      <ul class="nav nav-pills flex-row flex-nowrap gap-1">
+        <li class="nav-item">
+          <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="inicio" title="Inicio">
+            <i class="bi bi-house-door-fill"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="editoriales" title="Editoriales"><i
+              class="bi bi-building"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="libros" title="Libros">
+            <i class="bi bi-journal-bookmark"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link py-1 px-2 fs-6 text-white" href="#" data-section="ejemplares" title="Ejemplares"><i
+              class="bi bi-qr-code-scan"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link py-1 px-2 fs-6 text-white" data-section="prestamos" title="Préstamos"
+            id="mnuMovilPrestamos"><i class="bi bi-arrow-left-right"></i></a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Bloque de sesión compacto en móvil -->
+    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+      <img id="avatarUsuarioMovil" src="img/usuarios/U02.webp" alt="Usuario" class="rounded-circle object-fit-cover"
+        style="width: 28px; height: 28px;">
+      <span id="nombreUsuarioMovil" class="small text-white text-nowrap d-none">Usuario</span>
+      <span id="badgeRolMovil" class="badge bg-secondary">usuario</span>
+
+      <div id="contenedorAccionesMovil" class="d-flex align-items-center gap-1">
+        <button type="button" id="btnAbrirSesionAdminMovil" class="btn btn-outline-success btn-sm py-0 px-2"
+          title="Abrir sesión Admin">
+          <i class="bi bi-shield-lock"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de contraseña admin para móvil (fuera del aside oculto) -->
+  <div id="panelLoginAdminMovil" class="d-md-none bg-dark text-white p-2 border-top border-secondary d-none">
+    <div class="d-flex gap-2 align-items-center">
+      <input type="password" id="passAdminMovil" class="form-control form-control-sm" placeholder="Contraseña admin">
+      <button type="button" id="btnConfirmarAdminMovil" class="btn btn-success btn-sm text-nowrap">
+        Entrar
+      </button>
+      <button type="button" id="btnCancelarAdminMovil" class="btn btn-secondary btn-sm">
+        Cancelar
+      </button>
+    </div>
   </div>
 
   <div class="d-flex flex-grow-1 vh-100 w-100 m-0 p-0 overflow-hidden">
 
+    <!-- Panel de Navegación Lateral / Sidebar -->
     <aside class="bg-dark text-white p-3 d-none d-md-flex flex-column vh-100 overflow-auto flex-shrink-0"
-      style="width: 260px;">
-
-      <a href="#"
-        class="d-flex align-items-center mb-4 text-white text-decoration-none border-bottom border-secondary pb-3 flex-shrink-0">
-        <i class="bi bi-book-half fs-5 text-success me-2"></i>
-        <span class="fw-bold text-nowrap fs-6">Biblioteca Ohara</span>
+      style="width: 260px">
+      <a href="#" data-section="inicio"
+        class="logo-inicio animation-pop d-flex align-items-center mb-4 text-white text-decoration-none border-bottom border-secondary pb-3 flex-shrink-0">
+        <img src="favicon.ico" width="30" height="30" class="object-fit-contain">
+        <span class="fw-bold text-nowrap fs-6 mx-2">Biblioteca Ohara</span>
       </a>
 
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item mb-1">
           <a href="#" class="nav-link text-nowrap fs-6 text-white" data-section="inicio">
-            <i class="bi bi-speedometer2 me-2"></i>
+            <i class="bi bi-house-door-fill me-2"></i>
             <span>Inicio</span>
           </a>
         </li>
@@ -72,7 +146,7 @@
           </a>
         </li>
         <li class="nav-item mb-1">
-          <a href="#" class="nav-link text-nowrap fs-6 text-white" data-section="prestamos">
+          <a href="#" class="nav-link text-nowrap fs-6 text-white" data-section="prestamos" id="mnuPrestamos">
             <i class="bi bi-arrow-left-right me-2"></i>
             <span>Préstamos</span>
           </a>
@@ -88,16 +162,269 @@
         </div>
       </div>
 
+      <!-- Bloque de Sesión al final del aside -->
+      <div class="pt-3 mt-2 border-top border-secondary flex-shrink-0">
+        <!-- Foto al lado del nombre -->
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <img id="avatarUsuarioActual" src="img/usuarios/U02.webp" alt="Usuario"
+            class="rounded-circle object-fit-cover" style="width: 32px; height: 32px;">
+          <span id="nombreUsuarioActual" class="small text-white fw-semibold text-truncate">Usuario</span>
+        </div>
+
+        <div class="small text-white-50 mb-2">
+          Rol actual: <span id="badgeRolActual" class="badge bg-secondary">usuario</span>
+        </div>
+
+        <!-- Contenedor donde JS crea/elimina el botón de Cerrar sesión al ser admin -->
+        <div id="contenedorAccionesSesion" class="d-grid gap-2">
+          <button type="button" id="btnAbrirSesionAdmin" class="btn btn-outline-success btn-sm">
+            <i class="bi bi-shield-lock me-1"></i> Abrir sesión (Admin)
+          </button>
+        </div>
+
+        <!-- Mini formulario oculto con d-none para meter contraseña de admin -->
+        <div id="panelLoginAdmin" class="mt-2 p-2 bg-dark bg-opacity-50 rounded border border-secondary d-none">
+          <label for="passAdmin" class="form-label small text-white-50 mb-1">Contraseña admin:</label>
+          <input type="password" id="passAdmin" class="form-control form-control-sm mb-2" placeholder="Contraseña">
+          <div class="d-flex gap-1">
+            <button type="button" id="btnConfirmarAdmin" class="btn btn-success btn-sm flex-grow-1">Entrar</button>
+            <button type="button" id="btnCancelarAdmin" class="btn btn-secondary btn-sm">Cancelar</button>
+          </div>
+        </div>
+      </div>
     </aside>
 
     <main class="flex-grow-1 p-4 overflow-auto bg-white">
       <section id="sec-inicio" class="seccion-spa">
-        <h2>Panel de Inicio</h2>
-        <p>Bienvenido al sistema de gestión.</p>
+        <div class="d-flex align-items-center gap-3 border-bottom border-2 border-success pb-3 mb-4">
+          <div class="rounded-3 bg-success text-white d-flex align-items-center justify-content-center shadow-sm"
+            style="width: 48px; height: 48px;">
+            <i class="bi bi-house-door-fill fs-4"></i>
+          </div>
+          <div>
+            <h2 class="h4 fw-bold text-dark mb-1">Panel de Inicio</h2>
+            <p class="text-muted mb-0">Bienvenido al sistema de gestión.</p>
+          </div>
+        </div>
       </section>
 
       <section id="sec-editoriales" class="seccion-spa d-none">
         <h2>Gestión de Editoriales</h2>
+
+        <!-- Contenedor principal -->
+        <div class="container my-4">
+          <div id="vistaListadoEditoriales">
+            <div class="d-flex justify-content-between align-items-center border-bottom border-dark-subtle pb-2 mb-4">
+              <h2>Listado de editoriales</h2>
+              <!-- JS se encargará de escuchar el clic en este botón para ocultar la tabla y mostrar el alta -->
+              <button id="btnNuevaEditorial" class="btn btn-success">Nueva Editorial</button>
+            </div>
+
+            <!-- Aplicada la clase .tabla-contenedor-scroll en lugar del style inline -->
+            <div class="table-responsive border rounded tabla-contenedor-scroll">
+              <table class="table table-striped table-hover border-dark-subtle align-middle small mb-0">
+                <thead class="table-dark sticky-top">
+                  <tr>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Contacto</th>
+                    <th>Año Origen</th>
+                    <th>¿Edita en Español?</th>
+                    <th class="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <!-- Este tbody arranca vacío, codigo.js lo rellenará -->
+                <tbody id="filasEditoriales">
+                  <!-- Las filas se inyectan dinámicamente desde JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Paginación gestionada por JavaScript -->
+            <nav aria-label="Navegación de editoriales" class="mt-3">
+              <!-- Aplicada la clase .paginacion-verde en lugar de las variables inline -->
+              <ul class="pagination justify-content-center mb-0 paginacion-verde" id="paginacionEditoriales">
+                <!-- Los botones de paginación se generan en JS -->
+              </ul>
+            </nav>
+          </div>
+
+          <div id="vistaAltaEditorial" class="d-none">
+            <form id="frmAltaEditorial">
+              <legend class="border-bottom pb-2 mb-4">Alta de editorial</legend>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="txtNombreAlta" class="form-label">Nombre</label>
+                  <!-- ID cambiado para que no colisione con modificar -->
+                  <input type="text" class="form-control" id="txtNombreAlta" maxlength="45"
+                    placeholder="Introduzca el nombre" name="nombre" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="txtContactoAlta" class="form-label">Contacto</label>
+                  <input type="text" class="form-control" id="txtContactoAlta" maxlength="45"
+                    placeholder="Introduzca el contacto" name="contacto" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="selectPaisAlta" class="form-label">País</label>
+                  <!-- Las opciones las inyectará tu codigo.js, dejamos solo la principal -->
+                  <select class="form-select" id="selectPaisAlta" name="pais" required>
+                    <option value="" selected disabled>-- Selecciona un país --</option>
+                    <option value="1">Alemania</option>
+                    <option value="2">Argentina</option>
+                    <option value="3">Australia</option>
+                    <option value="4">Belgica</option>
+                    <option value="5">Brasil</option>
+                    <option value="6">Canada</option>
+                    <option value="7">Chile</option>
+                    <option value="8">China</option>
+                    <option value="9">Colombia</option>
+                    <option value="10">Corea del Sur</option>
+                    <option value="11">Espana</option>
+                    <option value="12">Estados Unidos</option>
+                    <option value="13">Francia</option>
+                    <option value="14">Holanda</option>
+                    <option value="15">Italia</option>
+                    <option value="16">Japon</option>
+                    <option value="17">Mexico</option>
+                    <option value="18">Peru</option>
+                    <option value="19">Portugal</option>
+                    <option value="20">Reino Unido</option>
+                    <option value="21">Suecia</option>
+                    <option value="22">Suiza</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="dateOrigenAlta" class="form-label">Año de origen</label>
+                  <input type="number" class="form-control" id="dateOrigenAlta" min="1400" max="2100" name="fechaOrigen"
+                    required />
+                </div>
+
+                <div class="col-md-6 mb-3 d-flex align-items-end">
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="checkPaisAlta" name="editaEspannol" />
+                    <label class="form-check-label" for="checkPaisAlta">Edita en español</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="imgEditorialAlta" class="form-label">Imagen editorial</label>
+                  <input type="file" class="form-control" id="imgEditorialAlta" name="img" accept="image/*" />
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <button type="submit" id="btnConfirmarAlta" class="btn btn-primary">Aceptar</button>
+                <button type="button" id="btnVolverAlta" class="btn btn-secondary">Volver</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="vistaModificarEditorial" class="d-none">
+            <form id="frmModificarEditorial">
+              <!-- Campos ocultos que JS rellenará antes de mostrar el formulario -->
+              <input type="hidden" id="idEditorialMod" value="">
+
+              <legend class="border-bottom pb-2 mb-4">Modificar datos de la editorial</legend>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="txtNombreMod" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="txtNombreMod" maxlength="45" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="txtContactoMod" class="form-label">Contacto</label>
+                  <input type="text" class="form-control" id="txtContactoMod" maxlength="45" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="selectPaisMod" class="form-label">País</label>
+                  <!-- Las opciones las inyectará tu codigo.js, dejamos solo la principal -->
+                  <select class="form-select" id="selectPaisMod" name="pais" required>
+                    <option value="" selected disabled>-- Selecciona un país --</option>
+                    <option value="1">Alemania</option>
+                    <option value="2">Argentina</option>
+                    <option value="3">Australia</option>
+                    <option value="4">Belgica</option>
+                    <option value="5">Brasil</option>
+                    <option value="6">Canada</option>
+                    <option value="7">Chile</option>
+                    <option value="8">China</option>
+                    <option value="9">Colombia</option>
+                    <option value="10">Corea del Sur</option>
+                    <option value="11">Espana</option>
+                    <option value="12">Estados Unidos</option>
+                    <option value="13">Francia</option>
+                    <option value="14">Holanda</option>
+                    <option value="15">Italia</option>
+                    <option value="16">Japon</option>
+                    <option value="17">Mexico</option>
+                    <option value="18">Peru</option>
+                    <option value="19">Portugal</option>
+                    <option value="20">Reino Unido</option>
+                    <option value="21">Suecia</option>
+                    <option value="22">Suiza</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="dateOrigenMod" class="form-label">Año de origen</label>
+                  <input type="number" class="form-control" id="dateOrigenMod" min="1400" max="2100" />
+                </div>
+
+                <div class="col-md-6 mb-3 d-flex align-items-end">
+                  <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="checkPaisMod" value="1" />
+                    <label class="form-check-label" for="checkPaisMod">Edita en español</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="imgEditorialMod" class="form-label">Nueva imagen (Dejar vacío para conservar
+                    actual)</label>
+                  <input type="file" class="form-control mb-2" id="imgEditorialMod" accept="image/*" />
+
+                  <div class="mt-2">
+                    <small class="text-muted d-block mb-1">Imagen actual: </small>
+                    <img id="imgPreviaMod" src="" alt="Vista previa" width="90" height="90" class="border rounded p-1 bg-white object-fit-contain">
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-3">
+                <button type="button" id="btnConfirmarMod" class="btn btn-warning">Guardar Cambios</button>
+                <button type="button" id="btnVolverMod" class="btn btn-secondary">Volver</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="modal fade" id="modalBaja" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+          aria-labelledby="modalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header border-bottom-0">
+                <h1 class="modal-title fs-5" id="modalLabel">Confirmar baja</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancelar"></button>
+              </div>
+              <div class="modal-body text-start">
+                ¿Estás seguro de que deseas dar de baja la editorial <strong id="nombreEditorialBaja"></strong>?
+                <!-- Campo oculto para guardar la ID que JS va a eliminar -->
+                <input type="hidden" id="idEditorialBaja" value="">
+              </div>
+              <div class="modal-footer border-top-0">
+                <button type="button" id="btnDenegearBaja" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button type="button" id="btnConfirmarBaja" class="btn btn-danger">Sí, eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
       </section>
 
       <section id="sec-libros" class="seccion-spa d-none">
@@ -237,11 +564,92 @@
         <h2>Gestión de Ejemplares</h2>
       </section>
 
+      <!-- Gestión de préstamos -->
       <section id="sec-prestamos" class="seccion-spa d-none">
         <h2>Gestión de Préstamos</h2>
-      </section>
-    </main>
+        <div class="border-bottom border-dark-subtle pb-2 mb-3">
+          <h2 class="h4 fw-bold text-dark mb-0">
+            <i class="bi bi-arrow-left-right text-success me-2"></i>
+            Gestión de Préstamos
+          </h2>
+        </div>
 
+        <button type="button" class="btn btn-success shadow mb-3" id="btnMostrarFrmPrestamo">
+          <i class="bi bi-plus-circle me-1"></i> Nuevo Préstamo
+        </button>
+
+        <!-- Tabla de Préstamos -->
+        <div class="table-responsive rounded" name="listadoPrestamos" id="listadoPrestamos">
+        </div>
+
+        <!-- Formulario Prestamo -->
+        <div id="frmCardPrestamo" class="card shadow-lg d-none mx-auto">
+          <div class="card-header d-flex justify-content-center align-items-center bg-dark">
+            <h5 class="card-title mb-0 text-light">Formulario de préstamo</h5>
+          </div>
+
+          <div class="card-body bg-light">
+            <form id="frmPrestamo" name="frmPrestamo">
+              <div class="row g-3">
+
+                <div class="col-md-12">
+                  <label for="lstTituloLibro" class="form-label fw-bold">Título del libro</label>
+                  <select class="form-select" id="lstTituloLibro" name="lstTituloLibro">
+                  </select>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="tieneFianza" class="form-label fw-bold">Fianza</label>
+                  <select class="form-select" id="lstTieneFianza" name="lstTieneFianza">
+                    <option value="0" selected>No</option>
+                    <option value="1">Sí</option>
+                  </select>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="importeFianza" class="form-label fw-bold">Importe</label>
+                  <div class="input-group">
+                    <input type="number" step="0.01" min="0" class="form-control" id="importeFianza"
+                      name="importeFianza">
+                    <span class="input-group-text">€</span>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="fechaPrestamo" class="form-label fw-bold">Fecha de préstamo</label>
+                  <input type="date" class="form-control" id="fechaPrestamo" name="fechaPrestamo" required>
+                </div>
+
+                <div class="col-md-3">
+                  <label for="fechaLimite" class="form-label fw-bold">Fecha límite</label>
+                  <input type="date" class="form-control" id="fechaLimite" name="fechaLimite" required>
+                </div>
+
+                <div class="col-12">
+                  <label for="urlImagen" class="form-label fw-bold">Subir imagen para el préstamo</label>
+                  <input type="file" class="form-control" id="urlImagen" name="urlImagen"
+                    accept=".jpg,.jpeg,.png,.webp,image/*">
+                  <div class="form-text">Formatos permitidos: JPG, PNG o WEBP (máx. 5 MB).</div>
+                </div>
+
+                <div class="col-12">
+                  <label for="observaciones" class="form-label fw-bold">Observaciones</label>
+                  <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+                </div>
+
+              </div>
+
+              <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button" id="btnCancelarPrestamo" class="btn btn-dark">Cancelar</button>
+                <button type="submit" class="btn btn-success" id="btnGuardarPrestamo">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
   </div>
 
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -259,6 +667,16 @@
   <script src="js/selector-nombres.js"></script>
   <script src="js/navegacion.js"></script>
   <script src="js/funcionalidad-libros.js"></script>
+  <!-- Librería JS de Bootstrap (necesaria para el modal) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script para el cambio de nombre dinamicamente -->
+  <script src="js/selector-nombres.js"></script>
+  <script type="text/javascript" src="js/ajax.js"></script>
+  <script type="text/javascript" src="js/login.js"></script>
+  <script type="text/javascript" src="js/objetos-prestamos.js"></script>
+  <script type="text/javascript" src="js/codigo-prestamos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
