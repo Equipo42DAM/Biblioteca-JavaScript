@@ -7,14 +7,15 @@ var paginaActual = 1;
 var filasPorPagina = 10;
 
 document.addEventListener("DOMContentLoaded", () => {
-  registrarEventos();
+  cargarEditoriales();
+  registrarEventosEditoriales();
 });
 
-function registrarEventos() {
+function registrarEventosEditoriales() {
   // Enlace del menú SPA correspondiente a Editoriales (selector-nombres.js)
   document.querySelectorAll('[data-section="editoriales"]').forEach((enlace) => {
     enlace.addEventListener("click", () => {
-      mostrarVista("vistaListadoEditoriales");
+      mostrarVistasEditoriales("vistaListadoEditoriales");
       cargarDesplegables();
       cargarEditoriales();
     });
@@ -80,25 +81,25 @@ function mostrarFormulario(oEvento) {
 
   switch (opcion) {
     case "btnNuevaEditorial":
-      mostrarVista("vistaAltaEditorial");
+      mostrarVistasEditoriales("vistaAltaEditorial");
       break;
     case "btnVolverAlta":
     case "btnVolverMod":
-      mostrarVista("vistaListadoEditoriales");
+      mostrarVistasEditoriales("vistaListadoEditoriales");
       break;
   }
 }
 
 // Función ocultar los formularios
-function ocultarFormularios() {
+function ocultarFormulariosEditoriales() {
   document.getElementById("vistaListadoEditoriales").classList.add("d-none");
   document.getElementById("vistaAltaEditorial").classList.add("d-none");
   document.getElementById("vistaModificarEditorial").classList.add("d-none");
 }
 
 // Función mostrar vista según una id
-function mostrarVista(idVistaAMostrar) {
-  ocultarFormularios();
+function mostrarVistasEditoriales(idVistaAMostrar) {
+  ocultarFormulariosEditoriales();
   const vista = document.getElementById(idVistaAMostrar);
   if (vista) {
     vista.classList.remove("d-none");
@@ -123,6 +124,8 @@ async function cargarDesplegables() {
 
     if (selectAlta) selectAlta.innerHTML = opciones;
     if (selectMod) selectMod.innerHTML = opciones;
+  } else {
+    alert("No se han podido cargar los países: " + respuesta.mensaje); 
   }
 }
 
@@ -321,7 +324,7 @@ async function procesarAltaEditorial(oEvento) {
 
   if (respuesta.ok) {
     frmAlta.reset();
-    mostrarVista("vistaListadoEditoriales");
+    mostrarVistasEditoriales("vistaListadoEditoriales");
     await cargarEditoriales();
   }
 }
@@ -371,7 +374,7 @@ function prepararModificacion(idEditorial) {
 
   document.getElementById("imgEditorialMod").value = "";
 
-  mostrarVista("vistaModificarEditorial");
+  mostrarVistasEditoriales("vistaModificarEditorial");
 }
 
 // Función que procesa la modificación de la editorial
@@ -416,7 +419,7 @@ async function procesarModificarEditorial() {
   alert(respuesta.mensaje);
 
   if (respuesta.ok) {
-    mostrarVista("vistaListadoEditoriales");
+    mostrarVistasEditoriales("vistaListadoEditoriales");
     await cargarEditoriales();
   }
 }

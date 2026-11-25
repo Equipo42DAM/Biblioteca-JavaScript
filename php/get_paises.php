@@ -4,8 +4,12 @@ require_once('config.php');
 try {
     $conexion = obtenerConexion();
 
-    $sql = "SELECT * FROM pais;";
+    $sql = "SELECT * FROM paises;";
     $resultado = $conexion->query($sql);
+
+    if (!$resultado) {
+        throw new Exception($conexion->error);
+    }
 
     $datos = [];
     while ($fila = $resultado->fetch_assoc()) {

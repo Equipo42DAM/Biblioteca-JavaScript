@@ -6,6 +6,10 @@ try {
 
     $sql = "SELECT * FROM editorial_carlos;";
     $resultado = $conexion->query($sql);
+    
+    if (!$resultado) {
+        throw new Exception($conexion->error);
+    }
 
     $datos = [];
     while ($fila = $resultado->fetch_assoc()) {

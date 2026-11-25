@@ -1,6 +1,5 @@
 <?php
 require_once('config.php');
-
 try {
     if (empty($_POST["editorial"])) {
         throw new Exception("Datos de editorial no proporcionados");
@@ -43,12 +42,6 @@ try {
     $stmt->close();
 
     responder(null, true, "Editorial dada de alta correctamente", $conexion);
-} catch (mysqli_sql_exception $e) {
-    if ($e->getCode() == 1062) {
-        responder(null, false, "Ya existe una editorial con ese nombre", null);
-    } else {
-        responder(null, false, "Error en la base de datos: " . $e->getMessage(), null);
-    }
 } catch (Exception $e) {
     responder(null, false, "Error: " . $e->getMessage(), null);
 }

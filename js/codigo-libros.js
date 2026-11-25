@@ -1,30 +1,21 @@
 "use strict";
 
-function mostrarSeccion(nombreSeccion) {
-    const secciones = document.querySelectorAll(".seccion-spa");
-    secciones.forEach((sec) => {
-        sec.classList.toggle("d-none", sec.id !== "sec-" + nombreSeccion);
-    });
-
-    const enlaces = document.querySelectorAll("[data-section]");
-    enlaces.forEach((enlace) => {
-        enlace.classList.toggle("active", enlace.getAttribute("data-section") === nombreSeccion);
-    });
-
+function activarSeccionLibrosSiCorresponde(nombreSeccion) {
     if (nombreSeccion === "libros" && typeof inicializarSeccionLibros === "function") {
         inicializarSeccionLibros();
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const enlacesMenu = document.querySelectorAll("[data-section]");
-    enlacesMenu.forEach((enlace) => {
-        enlace.addEventListener("click", (evento) => {
-            evento.preventDefault();
-            const seccion = enlace.getAttribute("data-section");
-            mostrarSeccion(seccion);
+    document.querySelectorAll('[data-section="libros"]').forEach((enlace) => {
+        enlace.addEventListener("click", () => {
+            activarSeccionLibrosSiCorresponde("libros");
         });
     });
 
-    mostrarSeccion("inicio");
+    const hashActual = window.location.hash.replace(/^#/, "").trim();
+    const guardado = sessionStorage.getItem("biblioteca_ohara_seccion");
+    const seccionInicial = hashActual || guardado || "inicio";
+
+    activarSeccionLibrosSiCorresponde(seccionInicial);
 });

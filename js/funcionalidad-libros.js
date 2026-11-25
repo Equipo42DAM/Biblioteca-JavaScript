@@ -1,5 +1,6 @@
 const URL_ENDPOINT_LIBROS = "php/libros.php";
 const gestorLibros = new GestorLibros(URL_ENDPOINT_LIBROS);
+
 let listaLibros = [];
 
 const toastEl = document.querySelector("#toastNotificacionLibros");
