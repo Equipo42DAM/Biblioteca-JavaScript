@@ -3,30 +3,67 @@
 var oBiblioteca = new Biblioteca();
 let listaPrestamos = [];
 let idPrestamoEditando = null;
+let filtroBusquedaPrestamos = "";
 
 document.addEventListener("DOMContentLoaded", () => {
-  mostrarListadoPrestamos();
+    registrarEventosFijos();
+    mostrarListadoPrestamos();
 });
 
-function registrarEventos() {
+function registrarEventosFijos() {
     document
         .querySelector("#mnuPrestamos")
-        .addEventListener("click", mostrarListadoPrestamos);
+        ?.addEventListener("click", () => {
+            limpiarInputBusquedaPrestamos();
+            mostrarListadoPrestamos();
+        });
     document
         .querySelector("#mnuMovilPrestamos")
-        .addEventListener("click", mostrarListadoPrestamos);
+        ?.addEventListener("click", () => {
+            limpiarInputBusquedaPrestamos();
+            mostrarListadoPrestamos();
+        });
     document
         .querySelector("#btnMostrarFrmPrestamo")
-        .addEventListener("click", mostrarFormularios);
+        ?.addEventListener("click", mostrarFormularios);
     document
         .querySelector("#lstTieneFianza")
-        .addEventListener("change", comprobarFianza);
+        ?.addEventListener("change", comprobarFianza);
     document
         .querySelector("#btnGuardarPrestamo")
-        .addEventListener("click", procesarPrestamo);
+        ?.addEventListener("click", procesarPrestamo);
     document
         .querySelector("#btnCancelarPrestamo")
-        .addEventListener("click", mostrarListadoPrestamos);
+        ?.addEventListener("click", () => {
+            refrescarListadoActual();
+        });
+    document
+        .querySelector("#formBuscarPrestamo")
+        ?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const texto = document.querySelector("#inputBuscarPrestamo")?.value.trim() ?? "";
+            filtroBusquedaPrestamos = texto;
+            if (!texto) {
+                await mostrarListadoPrestamos();
+                return;
+            }
+            await buscarPrestamos(texto);
+        });
+    document
+        .querySelector("#btnLimpiarBusquedaPrestamo")
+        ?.addEventListener("click", async () => {
+            limpiarInputBusquedaPrestamos();
+            await mostrarListadoPrestamos();
+        });
+}
+
+function limpiarInputBusquedaPrestamos() {
+    filtroBusquedaPrestamos = "";
+    const input = document.querySelector("#inputBuscarPrestamo");
+    if (input) input.value = "";
+}
+
+function registrarEventosFilas() {
     document
         .querySelectorAll(".btn-baja")
         .forEach((btn) => btn.addEventListener("click", cambiarEstadoPrestamo));
@@ -39,8 +76,6 @@ function registrarEventos() {
     document
         .querySelectorAll(".btn-entregar")
         .forEach((btn) => btn.addEventListener("click", entregarLibro));
-
-
 }
 
 function obtenerAccionBoton(boton, evento) {
@@ -89,7 +124,8 @@ function ocultarFormularios() {
 
 function notificaciones(respuesta) {
     let contenedor = document.getElementById("contenedorToasts");
-    let status = respuesta.ok ? "success" : "danger";
+    let status = respuesta?.ok ? "success" : "danger";
+    let mensaje = typeof respuesta === "string" ? respuesta : (respuesta?.mensaje || "Ha ocurrido un error.");
 
     if (!contenedor) {
         contenedor = document.createElement("div");
@@ -107,7 +143,7 @@ function notificaciones(respuesta) {
 
     toastEl.innerHTML = `
     <div class="d-flex">
-      <div class="toast-body shadow-lg">${respuesta.mensaje}</div>
+      <div class="toast-body shadow-lg">${mensaje}</div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
     </div>
   `;
@@ -117,33 +153,33 @@ function notificaciones(respuesta) {
     const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
     toast.show();
 
-    // Limpiar del DOM cuando desaparezca
     toastEl.addEventListener("hidden.bs.toast", () => {
         toastEl.remove();
     });
 }
 
-async function mostrarListadoPrestamos() {
+function pintarTablaPrestamos(respuesta, mensajeVacio = "No hay préstamos disponibles para mostrar.") {
     ocultarFormularios();
     const esAdmin = (sessionStorage.getItem("rol") || "usuario") === "admin";
-    const respuesta = await oBiblioteca.listadoPrestamos();
-
     const tabla = document.querySelector("#listadoPrestamos");
-    let filas = respuesta.datos ?? [];
+    let filas = respuesta?.datos ?? [];
 
     if (!esAdmin) {
         filas = filas.filter((f) => !f.fecha_baja && !f.fecha_devolucion);
     }
 
-    tabla.classList.add("border");
-    if (!respuesta.ok || filas.length === 0) {
-        tabla.innerHTML = `
-            <div class="alert alert-info text-center" role="alert">
-                ${respuesta.mensaje || "No hay préstamos disponibles para mostrar."}
-            </div>
-        `;
+    if (!respuesta?.ok || filas.length === 0) {
+        listaPrestamos = [];
+        tabla.classList.remove("border");
+        tabla.innerHTML = "";
+        notificaciones({
+            ok: false,
+            mensaje: respuesta?.ok === false && respuesta?.mensaje ? respuesta.mensaje : mensajeVacio
+        });
         return;
     }
+
+    tabla.classList.add("border");
 
     const prestamos = filas.map(
         (fila) =>
@@ -223,32 +259,50 @@ async function mostrarListadoPrestamos() {
             </table>
         </div>
     `;
-    registrarEventos();
+    registrarEventosFilas();
+}
+
+async function mostrarListadoPrestamos() {
+    const respuesta = await oBiblioteca.listadoPrestamos();
+    pintarTablaPrestamos(respuesta, "No hay préstamos disponibles para mostrar.");
+}
+
+async function buscarPrestamos(texto) {
+    const respuesta = await oBiblioteca.buscarPrestamos(texto);
+    pintarTablaPrestamos(respuesta, `No se encontraron préstamos para "${texto}".`);
+}
+
+async function refrescarListadoActual() {
+    if (filtroBusquedaPrestamos) {
+        await buscarPrestamos(filtroBusquedaPrestamos);
+    } else {
+        await mostrarListadoPrestamos();
+    }
 }
 
 async function cambiarEstadoPrestamo(oEvento) {
     let boton = oEvento.target.closest("button");
-    let idPrestamo = boton.dataset.id;
+    let idPrestamo = boton?.dataset.id;
     if (!idPrestamo) return;
 
     let respuesta = await oBiblioteca.cambiarEstadoPrestamo(idPrestamo);
     notificaciones(respuesta);
 
     if (respuesta?.ok) {
-        await mostrarListadoPrestamos();
+        await refrescarListadoActual();
     }
 }
 
 async function entregarLibro(oEvento) {
     let boton = oEvento.target.closest("button");
-    let idPrestamo = boton.dataset.id;
+    let idPrestamo = boton?.dataset.id;
     if (!idPrestamo) return;
 
     let respuesta = await oBiblioteca.finalizarPrestamo(idPrestamo);
     notificaciones(respuesta);
 
     if (respuesta?.ok) {
-        await mostrarListadoPrestamos();
+        await refrescarListadoActual();
     }
 }
 
@@ -256,8 +310,8 @@ async function mostrarLibrosDisponibles(idEjemplarSeleccionado = null) {
     let respuesta = await oBiblioteca.librosDisponibles();
     let options = "";
 
-    const filas = respuesta.datos ?? [];
-    if (!respuesta.ok || filas.length === 0) {
+    const filas = respuesta?.datos ?? [];
+    if (!respuesta?.ok || filas.length === 0) {
         options = `<option value="">No hay libros disponibles</option>`;
         frmPrestamo.lstTituloLibro.innerHTML = options;
         return;
@@ -269,14 +323,14 @@ async function mostrarLibrosDisponibles(idEjemplarSeleccionado = null) {
                 fila.id_libro,
                 fila.titulo_libro,
                 fila.id_ejemplar,
-                fila.disponibles,
+                fila.disponibles
             )
-    )
+    );
 
-    //Filtramos para que no me liste los libros que no tienen ejemplares
     const optionsLibros = libros
         .filter((l) => Number(l.disponibles) !== 0)
-        .map((l) => `<option value="${l.idEjemplar}">${l.tituloLibro} - (${l.disponibles} Disponibles)</option>`).join("");
+        .map((l) => `<option value="${l.idEjemplar}">${l.tituloLibro} - (${l.disponibles} Disponibles)</option>`)
+        .join("");
 
     frmPrestamo.lstTituloLibro.innerHTML = optionsLibros;
 
@@ -294,11 +348,9 @@ async function mostrarLibrosDisponibles(idEjemplarSeleccionado = null) {
 
 async function comprobarFianza() {
     let option = frmPrestamo.lstTieneFianza.value;
-    frmPrestamo.importeFianza.disabled = option === "0" ? true : false;
+    frmPrestamo.importeFianza.disabled = option === "0";
 }
 
-// Esta funciona procesa los datos del formulario para registrar un prestamos
-// El formulario es compartido para editar y nuevo
 async function procesarPrestamo(event) {
     if (event) event.preventDefault();
 
@@ -352,9 +404,8 @@ async function procesarPrestamo(event) {
     if (respuesta?.ok) {
         frmPrestamo.reset();
         window.history.replaceState({}, "", window.location.pathname);
+        await refrescarListadoActual();
     }
-
-    await mostrarListadoPrestamos();
 }
 
 async function cargarFormularioEdicion(prestamo) {
@@ -400,10 +451,9 @@ async function editarPrestamo(idPrestamo, datosPrestamo) {
             idPrestamoEditando = null;
             frmPrestamo.reset();
             window.history.replaceState({}, "", window.location.pathname);
-            await mostrarListadoPrestamos();
+            await refrescarListadoActual();
         }
     } catch (error) {
         notificaciones(error?.message || "Error al guardar los cambios");
     }
 }
-

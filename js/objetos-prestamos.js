@@ -199,5 +199,12 @@ class Biblioteca {
         let respuesta = await peticionPOST("prestamos_modificar.php", datos);
         return respuesta;
     }
+
+    async buscarPrestamos(texto = "") {
+        const datos = new FormData();
+        datos.append("busqueda", texto);
+        datos.append("rol", sessionStorage.getItem("rol") || "usuario");
+        return await peticionPOST("prestamos_buscar.php", datos);
+    }
   
 }
